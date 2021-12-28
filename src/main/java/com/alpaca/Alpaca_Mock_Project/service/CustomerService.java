@@ -1,11 +1,14 @@
 package com.alpaca.Alpaca_Mock_Project.service;
 
+import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
+import com.alpaca.Alpaca_Mock_Project.mapper.CustomerMapper;
 import com.alpaca.Alpaca_Mock_Project.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -13,12 +16,17 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private CustomerMapper customerMapper;
+
     public Customer getCustomerById(final Long id){
         return customerRepository.findById(id).orElse(null);
     }
 
-    public List<Customer> findAll(){
-        return customerRepository.findAll();
+    public List<CustomerDto> findAll(){
+        // map List<Customer> to List<CustomerDto> to remove customer id from response customer list
+        return customerRepository.findAll().stream()
+                .map(customerMapper::customerToCustomerDto).collect(Collectors.toList());
     }
 
     public Customer saveCustomer(final Customer customer){

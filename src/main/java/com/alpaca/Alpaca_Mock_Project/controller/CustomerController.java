@@ -1,5 +1,6 @@
 package com.alpaca.Alpaca_Mock_Project.controller;
 
+import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import com.alpaca.Alpaca_Mock_Project.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping
-    public List<Customer> findAll(){
+    public List<CustomerDto> findAll(){
         return customerService.findAll();
     }
 
