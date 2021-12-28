@@ -19,8 +19,9 @@ public class CustomerService {
     @Autowired
     private CustomerMapper customerMapper;
 
-    public Customer getCustomerById(final Long id){
-        return customerRepository.findById(id).orElse(null);
+    public CustomerDto getCustomerById(final Long id){
+        return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.findById(id).orElse(null));
+        //return customerRepository.findById(id).orElse(null);
     }
 
     public List<CustomerDto> findAll(){
@@ -33,8 +34,8 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public Customer updateCustomer(final Customer customer, final Long id){
-        Customer oldCustomer = getCustomerById(id); // this is the customer before update
+    public CustomerDto updateCustomer(final Customer customer, final Long id){
+        Customer oldCustomer = customerRepository.findById(id).orElse(null); // this is the customer before update
         oldCustomer.setName(customer.getName());
         oldCustomer.setGender(customer.getGender());
         oldCustomer.setCardId(customer.getCardId());
@@ -43,7 +44,8 @@ public class CustomerService {
         oldCustomer.setDateOfBirth(customer.getDateOfBirth());
         oldCustomer.setAddress(customer.getAddress());
         oldCustomer.setOccupation(customer.getOccupation());
-        return customerRepository.save(oldCustomer);
+        return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.save(oldCustomer));
+        //return customerRepository.save(oldCustomer);
     }
 
     public void deleteCustomerById(final Long id){
