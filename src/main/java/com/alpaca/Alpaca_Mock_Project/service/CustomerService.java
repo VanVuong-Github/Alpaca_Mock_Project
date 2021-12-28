@@ -7,6 +7,7 @@ import com.alpaca.Alpaca_Mock_Project.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,21 +20,25 @@ public class CustomerService {
     @Autowired
     private CustomerMapper customerMapper;
 
+    @Transactional
     public CustomerDto getCustomerById(final Long id){
         return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.findById(id).orElse(null));
         //return customerRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public List<CustomerDto> findAll(){
         // map List<Customer> to List<CustomerDto> to remove customer id from response customer list
         return customerRepository.findAll().stream()
                 .map(customerMapper::customerToCustomerDto).collect(Collectors.toList());
     }
 
+    @Transactional
     public Customer saveCustomer(final Customer customer){
         return customerRepository.save(customer);
     }
 
+    @Transactional
     public CustomerDto updateCustomer(final Customer customer, final Long id){
         Customer oldCustomer = customerRepository.findById(id).orElse(null); // this is the customer before update
         oldCustomer.setName(customer.getName());
@@ -48,6 +53,7 @@ public class CustomerService {
         //return customerRepository.save(oldCustomer);
     }
 
+    @Transactional
     public void deleteCustomerById(final Long id){
         customerRepository.deleteById(id);
     }
