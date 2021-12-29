@@ -27,7 +27,7 @@ public class CCustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CCustomerDTO> getCustomerById(@PathVariable Long id){
+    public ResponseEntity<CCustomer> getCustomerById(@PathVariable Long id){
         try {
             return new ResponseEntity<>(cCustomerService.getCustomerById(id), HttpStatus.OK);
         } catch (Exception e){

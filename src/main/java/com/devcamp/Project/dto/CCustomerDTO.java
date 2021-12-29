@@ -1,9 +1,11 @@
 package com.devcamp.Project.dto;
 
+import com.devcamp.Project.entity.CContract;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,4 +20,5 @@ public class CCustomerDTO {
     private Date dateOfBirth;
     private String address;
     private String occupation;
+    private List<CContract> contract;
 }

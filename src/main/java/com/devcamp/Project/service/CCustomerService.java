@@ -25,9 +25,9 @@ public class CCustomerService {
 				.map(iCustomerMapped::customerToCustomerDTO).collect(Collectors.toList());
 	}
 	
-	public CCustomerDTO getCustomerById(final Long id) {
-		//return iCustomerRepository.findById(id).orElse(null);
-		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.findById(id).get());
+	public CCustomer getCustomerById(final Long id) {
+		return iCustomerRepository.findById(id).orElse(null);
+		//return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.findById(id).get());
 	}
 	
 	public CCustomerDTO createCustomer(CCustomer inputCustomer) {
