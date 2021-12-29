@@ -3,6 +3,7 @@ package com.devcamp.Project.controller;
 import com.devcamp.Project.entity.CCustomer;
 import com.devcamp.Project.service.CCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,34 +17,48 @@ public class CCustomerController {
     CCustomerService cCustomerService;
 
     @GetMapping("/")
-    public List<CCustomer> getAll(){
-        return cCustomerService.getAllCustomer();
+    public ResponseEntity<List<CCustomer>> getAll(){
+        try {
+            return new  ResponseEntity<>(cCustomerService.getAllCustomer(), HttpStatus.OK);
+        } catch(Exception e) {
+            return new  ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
-    public CCustomer getCustomerById(@PathVariable Long id){
-        return cCustomerService.getCustomerById(id);
+    public ResponseEntity<CCustomer> getCustomerById(@PathVariable Long id){
+        try {
+            return new ResponseEntity<>(cCustomerService.getCustomerById(id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/")
-    public CCustomer createCustomer(@RequestBody CCustomer customer){
-        return cCustomerService.createCustomer(customer);
+    public ResponseEntity<Object> createCustomer(@RequestBody CCustomer customer){
+        try {
+            return new ResponseEntity<>(cCustomerService.createCustomer(customer), HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PostMapping("/{id}")
-    public CCustomer updateCustomer(@PathVariable Long id, @RequestBody CCustomer inputCustomer){
-        return cCustomerService.updateCustomer(inputCustomer, id);
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateCustomer(@PathVariable Long id, @RequestBody CCustomer inputCustomer){
+        try {
+            return new ResponseEntity<>(cCustomerService.updateCustomer(inputCustomer, id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable Long id){
+    public ResponseEntity<Object> deleteCustomer(@PathVariable Long id){
         try {
-            cCustomerService.deleteCustomerById(id);
-
-            return ResponseEntity.ok().body("Customer deleted!");
-        } catch(Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        } catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.ok().body("Customer deleted!");
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

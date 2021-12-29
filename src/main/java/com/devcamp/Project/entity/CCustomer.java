@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table( name = "customers")
@@ -25,13 +26,21 @@ public class CCustomer {
 	
     private String name;
     private String gender;
+
+    @Column( name = "card_id")
     private String cardId;
     private String phone;
     private String email;
+
+    @Column( name = "date_of_bird")
     private Date dateOfBirth;
     private String address;
     private String occupation;
-	
+
+    @OneToMany( targetEntity = CContract.class,
+                cascade = CascadeType.ALL,
+                mappedBy = "customer")
+    private List<CContract> contract;
 	
 	
 	

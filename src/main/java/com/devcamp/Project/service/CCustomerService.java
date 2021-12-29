@@ -26,7 +26,7 @@ public class CCustomerService {
 	}
 	
 	public CCustomer updateCustomer(CCustomer inputCustomer, Long customerId) {
-		CCustomer customer = new CCustomer(); //iCustomerRepository.findById(customerId).get();
+		CCustomer customer = iCustomerRepository.findById(customerId).get();
 		customer.setName(inputCustomer.getName());
 		customer.setGender(inputCustomer.getGender());
 		customer.setCardId(inputCustomer.getCardId());
