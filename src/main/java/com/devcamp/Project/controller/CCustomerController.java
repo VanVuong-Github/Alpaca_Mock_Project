@@ -1,5 +1,6 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.dto.CCustomerDTO;
 import com.devcamp.Project.entity.CCustomer;
 import com.devcamp.Project.service.CCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class CCustomerController {
     CCustomerService cCustomerService;
 
     @GetMapping("/")
-    public ResponseEntity<List<CCustomer>> getAll(){
+    public ResponseEntity<List<CCustomerDTO>> getAll(){
         try {
             return new  ResponseEntity<>(cCustomerService.getAllCustomer(), HttpStatus.OK);
         } catch(Exception e) {
@@ -26,7 +27,7 @@ public class CCustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CCustomer> getCustomerById(@PathVariable Long id){
+    public ResponseEntity<CCustomerDTO> getCustomerById(@PathVariable Long id){
         try {
             return new ResponseEntity<>(cCustomerService.getCustomerById(id), HttpStatus.OK);
         } catch (Exception e){
@@ -44,7 +45,7 @@ public class CCustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateCustomer(@PathVariable Long id, @RequestBody CCustomer inputCustomer){
+    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody CCustomer inputCustomer){
         try {
             return new ResponseEntity<>(cCustomerService.updateCustomer(inputCustomer, id), HttpStatus.OK);
         } catch (Exception e){
