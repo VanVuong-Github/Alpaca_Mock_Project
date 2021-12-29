@@ -1,6 +1,5 @@
 package com.alpaca.Alpaca_Mock_Project.entity;
 
-import com.alpaca.Alpaca_Mock_Project.dto.FileResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +13,17 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ClaimRequest implements Serializable {
+@Table(name = "files")
+public class FileEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String customerName;
-    private String cardId;
+    private String name;
+    private Long size;
+    private String contentType;
+    private Long requestId;
+
+    @Lob
+    private byte[] data;
 }
