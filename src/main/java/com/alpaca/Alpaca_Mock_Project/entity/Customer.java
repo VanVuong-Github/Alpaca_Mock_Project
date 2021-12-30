@@ -1,5 +1,6 @@
 package com.alpaca.Alpaca_Mock_Project.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -24,6 +25,8 @@ public class Customer implements Serializable {
     private String cardId;
     private String phone;
     private String email;
+
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date dateOfBirth;
     private String address;
     private String occupation;

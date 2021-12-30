@@ -20,13 +20,14 @@ public class FileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getFile(@PathVariable("id") final Long id){
-        FileEntity fileEntity = fileService.getFileById(id);
-        if (fileEntity.equals(null)){
-            return ResponseEntity.notFound().build();
+        try {
+            FileEntity fileEntity = fileService.getFileById(id);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileEntity.getName() + "\"")
+                    .contentType(MediaType.valueOf(fileEntity.getContentType()))
+                    .body(fileEntity.getData());
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().body("File with id: " + id + " not found!");
         }
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileEntity.getName() + "\"")
-                .contentType(MediaType.valueOf(fileEntity.getContentType()))
-                .body(fileEntity.getData());
     }
 }

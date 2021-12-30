@@ -22,7 +22,18 @@ public class ClaimRequestController {
         try {
             return ResponseEntity.ok().body(claimRequestService.getClaimRequestById(id));
         } catch (Exception e){
-            return ResponseEntity.internalServerError().body("Claim Request Not Found!");
+            return ResponseEntity.internalServerError().body("Claim Request Not Found! ");
+        }
+    }
+
+    @GetMapping("/by")
+    public ResponseEntity<?> getClaimRequestByCustomerNameAndCardId(@RequestParam("customerName") final String customerName,
+                                                                    @RequestParam("cardId") final String cardId){
+        try {
+            return ResponseEntity.ok().body(claimRequestService.getClaimRequestByCustomerNameAndCardId(customerName, cardId));
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Claim Request Not Found! ");
         }
     }
 
@@ -37,8 +48,7 @@ public class ClaimRequestController {
             claimRequestService.createClaimRequest(claimRequestDto);
             return ResponseEntity.ok().body(String.format("Create Claim Request Successfully!"));
         } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(String.format("Create Claim Request Failed!"));
+            return ResponseEntity.internalServerError().body(String.format("Create Claim Request Failed! "));
         }
     }
 
@@ -49,8 +59,7 @@ public class ClaimRequestController {
             claimRequestService.updateClaimRequest(claimRequestDto, id);
             return ResponseEntity.ok().body(String.format("Update Claim Request Successfully!"));
         } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(String.format("Update Claim Request Failed!"));
+            return ResponseEntity.internalServerError().body(String.format("Update Claim Request Failed! "));
         }
     }
 
@@ -60,8 +69,7 @@ public class ClaimRequestController {
             claimRequestService.deleteClaimRequest(id);
             return ResponseEntity.ok().body("Claim Request Deleted!");
         } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Claim Request Deleting Failed!");
+            return ResponseEntity.badRequest().body("Claim Request Deleting Failed! ");
         }
     }
 }

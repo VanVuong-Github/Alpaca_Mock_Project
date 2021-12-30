@@ -8,7 +8,6 @@ import com.alpaca.Alpaca_Mock_Project.entity.FileEntity;
 import com.alpaca.Alpaca_Mock_Project.repository.ClaimRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -23,6 +22,11 @@ public class ClaimRequestService {
 
     @Autowired
     private FileService fileService;
+
+    @Transactional
+    public ClaimRequestResponse getClaimRequestByCustomerNameAndCardId(final String customerName, final String cardId){
+        return mapToClaimRequestResponse(claimRequestRepository.findByCustomerNameContainingIgnoreCaseAndCardIdContainingIgnoreCaseOrderByCustomerNameAsc(customerName, cardId).orElse(null));
+    }
 
     @Transactional
     public List<ClaimRequestResponse> findAll(){
@@ -41,8 +45,13 @@ public class ClaimRequestService {
                 .customerName(claimRequestDto.getCustomerName())
                 .cardId(claimRequestDto.getCardId())
                 .build();
-        //save file with claim request id
-        List<FileEntity> photos = fileService.saveAll(claimRequestDto.getPhotos(), claimRequestRepository.save(claimRequest).getId());
+        try {
+            //save file with claim request id
+            List<FileEntity> photos = fileService.saveAll(claimRequestDto.getPhotos()
+                    , claimRequestRepository.save(claimRequest).getId());
+        } catch (Exception e){
+            throw new IOException("Create Claim Request Failed: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -65,36 +74,12 @@ public class ClaimRequestService {
     }
 
     /**
-     * map a FileEntity to FileResponse
-     * @param file
-     * @return fileResponse
-     */
-    private FileResponse mapToFileResponse(FileEntity file){
-        // build url for this file
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/files/")
-                .path(file.getId().toString())
-                .toUriString();
-
-        FileResponse fileResponse = FileResponse.builder()
-                .id(file.getId())
-                .name(file.getName())
-                .contentType(file.getContentType())
-                .size(file.getSize())
-                .url(url)
-                .requestId(file.getRequestId())
-                .build();
-        return fileResponse;
-    }
-
-    /**
      * map a ClaimRequest to ClaimRequestResponse
      * @param claimRequest
      * @return claimRequestResponse
      */
     private ClaimRequestResponse mapToClaimRequestResponse(ClaimRequest claimRequest){
-        List<FileResponse> photos = fileService.findAllByRequestId(claimRequest.getId())
-                .stream().map(this::mapToFileResponse).collect(Collectors.toList());
+        List<FileResponse> photos = fileService.findAllByRequestId(claimRequest.getId());
         ClaimRequestResponse claimRequestResponse = ClaimRequestResponse.builder()
                 .customerName(claimRequest.getCustomerName())
                 .cardId(claimRequest.getCardId())
