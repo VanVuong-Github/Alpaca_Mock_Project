@@ -1,8 +1,12 @@
 package com.devcamp.Project.service;
 
+import com.devcamp.Project.entity.CClaimRequest;
+import com.devcamp.Project.entity.CFile;
 import com.devcamp.Project.exception.CFileStorageException;
 import com.devcamp.Project.exception.CMyFileNotFoundException;
 import com.devcamp.Project.entity.CFileProperties;
+import com.devcamp.Project.repository.IClaimRequestRepository;
+import com.devcamp.Project.repository.IFileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -15,11 +19,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CFileService {
-    private final Path fileStorageLocation;
 
+    private final Path fileStorageLocation;
     @Autowired
     public CFileService(CFileProperties fileStorageProperties) {
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
@@ -32,24 +38,40 @@ public class CFileService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
-        // Normalize file name
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+    @Autowired
+    IFileRepository iFileRepository;
 
-        try {
-            // Check if the file's name contains invalid characters
-            if(fileName.contains("..")) {
-                throw new CFileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            }
 
-            // Copy file to the target location (Replacing existing file with the same name)
+    // lưu trữ file
+    public List<CFile> storeFile(List<MultipartFile> files, long id) throws IOException {
+
+        // Lưu ảnh vào DB
+        List<CFile> filesToSave = new ArrayList<>();
+        for (MultipartFile file: files) {
+            CFile fileEntity = CFile.builder()
+                    .fileName(StringUtils.cleanPath(file.getOriginalFilename()))
+                    .fileType(file.getContentType())
+                    .size(file.getSize())
+                    .data(file.getBytes())
+                    .claimRequestId(id)
+                    .build();
+            filesToSave.add(fileEntity);
+
+            // Lưu ảnh vào folder pictures trong project
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-            return fileName;
-        } catch (IOException ex) {
-            throw new CFileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
+
+        return iFileRepository.saveAll(filesToSave);
+    }
+
+    public List<CFile> getAll(){
+        return iFileRepository.findAll();
+    }
+
+    public CFile getById(Long id){
+        return iFileRepository.findById(id).orElse(null);
     }
 
     public Resource loadFileAsResource(String fileName) {
@@ -64,5 +86,9 @@ public class CFileService {
         } catch (MalformedURLException ex) {
             throw new CMyFileNotFoundException("File not found " + fileName, ex);
         }
+    }
+
+    public void deleteAllFileByClaimRequestId(Long id){
+        iFileRepository.deleteAllByClaimRequestId(id);
     }
 }
