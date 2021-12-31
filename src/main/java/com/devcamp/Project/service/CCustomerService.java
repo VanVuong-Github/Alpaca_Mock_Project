@@ -18,23 +18,27 @@ public class CCustomerService {
 
 	@Autowired
 	private  ICustomerMapped iCustomerMapped;
-	
+
+	// lấy tất cả thông tin khách hàng theo Dto
 	public List<CCustomerDTO> getAllCustomer() {
 		//return iCustomerRepository.findAll();
 		return iCustomerRepository.findAll().stream()
 				.map(iCustomerMapped::customerToCustomerDTO).collect(Collectors.toList());
 	}
-	
-	public CCustomer getCustomerById(final Long id) {
-		return iCustomerRepository.findById(id).orElse(null);
-		//return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.findById(id).get());
+
+	// lấy tất cả thông tin khách hàng bằng id theo Dto
+	public CCustomerDTO getCustomerById(final Long id) {
+		//return iCustomerRepository.findById(id).orElse(null);
+		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.findById(id).get());
 	}
-	
+
+	// tao thông tin khách hàng
 	public CCustomerDTO createCustomer(CCustomer inputCustomer) {
 		//return iCustomerRepository.save(inputCustomer);
 		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.save(inputCustomer));
 	}
-	
+
+	// cập nhật thông tin khách hàng
 	public CCustomerDTO updateCustomer(CCustomer inputCustomer, Long customerId) {
 		CCustomer customer = iCustomerRepository.findById(customerId).get();
 		customer.setName(inputCustomer.getName());
@@ -50,6 +54,7 @@ public class CCustomerService {
 		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.save(customer));
 	}
 
+	// xóa thông tin khách hàng
 	public void deleteCustomerById(final Long id){
 		iCustomerRepository.deleteById(id);
 	}

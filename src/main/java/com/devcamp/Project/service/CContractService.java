@@ -20,18 +20,22 @@ public class CContractService {
     @Autowired
     private ICustomerRepository iCustomerRepository;
 
+    // lấy tất cả thông tin hợp đồng
     public List<CContract> getAllContract(){
         return iContractRepository.findAll();
     }
 
+    // lấy thông tin hợp đồng theo id
     public  CContract getContractById(final Long id){
         return iContractRepository.findById(id).orElse(null);
     }
 
+    // lấy thông tin hợp đồng theo id của khách hàng
     public List<CContract> getContractByCustomerId(final Long customerId){
         return iContractRepository.findByCustomerId(customerId);
     }
 
+    // tạo mới hợp đồng
     public CContract createContract(Long customerId, CContract inputContract){
         Optional<CCustomer> customer = iCustomerRepository.findById(customerId);
         if (customer.isPresent()){
@@ -42,6 +46,7 @@ public class CContractService {
         }
     }
 
+    // cập nhật hợp đồng
     public CContract updateContract(Long id, CContract inputContract){
         CContract contract = iContractRepository.findById(id).orElse(null);
         contract.setValidFrom(inputContract.getValidFrom());
@@ -55,8 +60,8 @@ public class CContractService {
 
     }
 
+    // xóa hợp đồng
     public void deleteContractById(final Long id){
-
         iContractRepository.deleteById(id);
     }
 }

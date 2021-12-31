@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name = "files")
-public class CFile implements Serializable {
+public class CFile {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)

@@ -17,6 +17,7 @@ public class CCustomerController {
     @Autowired
     CCustomerService cCustomerService;
 
+    // lấy tất cả thông tin khách hàng thông service
     @GetMapping("/")
     public ResponseEntity<List<CCustomerDTO>> getAll(){
         try {
@@ -26,8 +27,9 @@ public class CCustomerController {
         }
     }
 
+    // lấy tất cả thông tin khách hàng bằng id thông service
     @GetMapping("/{id}")
-    public ResponseEntity<CCustomer> getCustomerById(@PathVariable Long id){
+    public ResponseEntity<CCustomerDTO> getCustomerById(@PathVariable Long id){
         try {
             return new ResponseEntity<>(cCustomerService.getCustomerById(id), HttpStatus.OK);
         } catch (Exception e){
@@ -35,6 +37,7 @@ public class CCustomerController {
         }
     }
 
+    // tạo mới khách hàng
     @PostMapping("/")
     public ResponseEntity<Object> createCustomer(@RequestBody CCustomer customer){
         try {
@@ -44,6 +47,7 @@ public class CCustomerController {
         }
     }
 
+    // cập nhật khách hàng
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody CCustomer inputCustomer){
         try {
@@ -53,13 +57,14 @@ public class CCustomerController {
         }
     }
 
+    // xóa khách hàng
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable Long id){
         try {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            cCustomerService.deleteCustomerById(id);
+            return ResponseEntity.ok().body(String.format("Delete Customer Successfully!"));
         } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(String.format("Delete Customer Failed!"));
         }
     }
 }

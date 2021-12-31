@@ -26,11 +26,11 @@ import java.util.List;
 public class CFileService {
 
     private final Path fileStorageLocation;
+
     @Autowired
     public CFileService(CFileProperties fileStorageProperties) {
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
                 .toAbsolutePath().normalize();
-
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
@@ -66,14 +66,17 @@ public class CFileService {
         return iFileRepository.saveAll(filesToSave);
     }
 
+    // lấy tất cả file trong Db
     public List<CFile> getAll(){
         return iFileRepository.findAll();
     }
 
+    // lấy file bằng id trong Db
     public CFile getById(Long id){
         return iFileRepository.findById(id).orElse(null);
     }
 
+    // lấy file luu trong folder
     public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
@@ -88,6 +91,7 @@ public class CFileService {
         }
     }
 
+    // xóa file theo id của claimRequest
     public void deleteAllFileByClaimRequestId(Long id){
         iFileRepository.deleteAllByClaimRequestId(id);
     }

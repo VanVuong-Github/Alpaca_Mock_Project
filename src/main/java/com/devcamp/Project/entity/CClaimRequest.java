@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table( name = "claim_request")
-public class CClaimRequest implements Serializable {
+public class CClaimRequest {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)

@@ -16,6 +16,7 @@ public class CContractController {
     @Autowired
     CContractService cContractService;
 
+    // lấy thông tin hợp đồng thông qa service
     @GetMapping("/")
     public ResponseEntity<List<CContract>> getAllContract(){
         try {
@@ -25,6 +26,7 @@ public class CContractController {
         }
     }
 
+    // lấy thông tin hợp đồng bằng id thông qa service
     @GetMapping("/{id}")
     public ResponseEntity<CContract> getContractById(@PathVariable Long id){
         try {
@@ -34,6 +36,7 @@ public class CContractController {
         }
     }
 
+    // lấy thông tin hợp đồng bằng id của khách hàng thông qa service
     @GetMapping("/customer/{id}")
     public ResponseEntity<List<CContract>> getContractByCustomerId(@PathVariable Long id){
         try {
@@ -43,6 +46,7 @@ public class CContractController {
         }
     }
 
+    // tạo mới hợp đồng
     @PostMapping("/customer/{id}")
     public ResponseEntity<Object> createContract(@PathVariable Long id, @RequestBody CContract inputContract){
         try {
@@ -52,6 +56,7 @@ public class CContractController {
         }
     }
 
+    // cập nhật hợp đồng
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateContract(@PathVariable Long id, @RequestBody CContract inputContract){
         try {
@@ -61,12 +66,14 @@ public class CContractController {
         }
     }
 
+    // xóa hợp đồng
     @DeleteMapping("/")
     public ResponseEntity<Object> deleteContract(@PathVariable Long id){
         try {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            cContractService.deleteContractById(id);
+            return ResponseEntity.ok().body(String.format("Delete Contract Successfully!"));
         } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(String.format("Delete Contract Failed!"));
         }
     }
 

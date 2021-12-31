@@ -41,11 +41,6 @@ public class CCustomer {
                 cascade = CascadeType.ALL,
                 mappedBy = "customer")
     private List<CContract> contract;
-
-//    @OneToMany( targetEntity = CClaimRequest.class,
-//                cascade = CascadeType.ALL,
-//                mappedBy = "customer")
-//    private List<CClaimRequest> claimRequests;
 	
 	
 	

@@ -23,14 +23,17 @@ public class CClaimRequestService {
     @Autowired
     CFileService cFileService;
 
+    // lấy tất cả thông tin claimRequest
     public List<CClaimRequest> getAll(){
         return iClaimRequestRepository.findAll();
     }
 
+    // lấy tất cả thông tin claimRequest theo id
     public CClaimRequest getById(Long id){
         return iClaimRequestRepository.findById(id).orElse(null);
     }
 
+    // tạo mới claimRequest
     public CClaimRequest  createClaimRequest(CClaimRequest cClaimRequest) throws IOException {
 
         CClaimRequest claimRequest = CClaimRequest.builder()
@@ -43,6 +46,7 @@ public class CClaimRequestService {
         return claimRequest;
     }
 
+    // cập nhật thông tin claimRequest
     @Transactional
     public CClaimRequest updateClaimRequest(CClaimRequest inputClaimRequest, Long id) throws IOException {
         CClaimRequest claimRequest = iClaimRequestRepository.findById(id).orElse(null); //this is the request before change
@@ -57,6 +61,7 @@ public class CClaimRequestService {
         return  iClaimRequestRepository.save(claimRequest);
     }
 
+    // xóa thông tin claimRequest và file kèm theo
     public void deleteClaimRequest(Long id){
         iClaimRequestRepository.deleteById(id);
         cFileService.deleteAllFileByClaimRequestId(id);
