@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CCustomer {
+public class Customer {
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.IDENTITY)
@@ -37,10 +37,10 @@ public class CCustomer {
     private String address;
     private String occupation;
 
-    @OneToMany( targetEntity = CContract.class,
+    @OneToMany( targetEntity = Contract.class,
                 cascade = CascadeType.ALL,
                 mappedBy = "customer")
-    private List<CContract> contract;
+    private List<Contract> contract;
 	
 	
 	

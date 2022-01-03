@@ -1,9 +1,9 @@
 package com.devcamp.Project.service;
 
-import com.devcamp.Project.dto.CCustomerDTO;
-import com.devcamp.Project.entity.CCustomer;
-import com.devcamp.Project.mapped.ICustomerMapped;
-import com.devcamp.Project.repository.ICustomerRepository;
+import com.devcamp.Project.dto.CustomerDTO;
+import com.devcamp.Project.entity.Customer;
+import com.devcamp.Project.mapped.CustomerMapped;
+import com.devcamp.Project.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,36 +11,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CCustomerService {
+public class CustomerService {
 
 	@Autowired
-	private ICustomerRepository iCustomerRepository;
+	private CustomerRepository customerRepository;
 
 	@Autowired
-	private  ICustomerMapped iCustomerMapped;
+	private CustomerMapped customerMapped;
 
 	// lấy tất cả thông tin khách hàng theo Dto
-	public List<CCustomerDTO> getAllCustomer() {
+	public List<CustomerDTO> getAllCustomer() {
 		//return iCustomerRepository.findAll();
-		return iCustomerRepository.findAll().stream()
-				.map(iCustomerMapped::customerToCustomerDTO).collect(Collectors.toList());
+		return customerRepository.findAll().stream()
+				.map(customerMapped::customerToCustomerDTO).collect(Collectors.toList());
 	}
 
 	// lấy tất cả thông tin khách hàng bằng id theo Dto
-	public CCustomerDTO getCustomerById(final Long id) {
+	public CustomerDTO getCustomerById(final Long id) {
 		//return iCustomerRepository.findById(id).orElse(null);
-		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.findById(id).get());
+		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.findById(id).get());
 	}
 
 	// tao thông tin khách hàng
-	public CCustomerDTO createCustomer(CCustomer inputCustomer) {
+	public CustomerDTO createCustomer(Customer inputCustomer) {
 		//return iCustomerRepository.save(inputCustomer);
-		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.save(inputCustomer));
+		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.save(inputCustomer));
 	}
 
 	// cập nhật thông tin khách hàng
-	public CCustomerDTO updateCustomer(CCustomer inputCustomer, Long customerId) {
-		CCustomer customer = iCustomerRepository.findById(customerId).get();
+	public CustomerDTO updateCustomer(Customer inputCustomer, Long customerId) {
+		Customer customer = customerRepository.findById(customerId).get();
 		customer.setName(inputCustomer.getName());
 		customer.setGender(inputCustomer.getGender());
 		customer.setCardId(inputCustomer.getCardId());
@@ -51,11 +51,11 @@ public class CCustomerService {
 		customer.setOccupation(inputCustomer.getOccupation());
 
 		//return iCustomerRepository.save(customer);
-		return iCustomerMapped.INSTANCE.customerToCustomerDTO(iCustomerRepository.save(customer));
+		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.save(customer));
 	}
 
 	// xóa thông tin khách hàng
 	public void deleteCustomerById(final Long id){
-		iCustomerRepository.deleteById(id);
+		customerRepository.deleteById(id);
 	}
 }

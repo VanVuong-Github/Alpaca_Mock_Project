@@ -1,8 +1,8 @@
 package com.devcamp.Project.controller;
 
-import com.devcamp.Project.entity.CClaimRequest;
-import com.devcamp.Project.repository.IClaimRequestRepository;
-import com.devcamp.Project.service.CClaimRequestService;
+import com.devcamp.Project.entity.ClaimRequest;
+import com.devcamp.Project.repository.ClaimRequestRepository;
+import com.devcamp.Project.service.ClaimRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,19 +12,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/claimrequest")
-public class CClaimController {
+public class ClaimController {
 
     @Autowired
-    IClaimRequestRepository iClaimRequestRepository;
+    ClaimRequestRepository claimRequestRepository;
 
     @Autowired
-    CClaimRequestService cClaimRequestService;
+    ClaimRequestService claimRequestService;
 
     // lấy tất cả thông tin của claimRequest thông qa service
     @GetMapping("/")
-    public ResponseEntity<List<CClaimRequest>> getAll(){
+    public ResponseEntity<List<ClaimRequest>> getAll(){
         try {
-            return new ResponseEntity<>(cClaimRequestService.getAll(), HttpStatus.OK);
+            return new ResponseEntity<>(claimRequestService.getAll(), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -32,9 +32,9 @@ public class CClaimController {
 
     // lấy tất cả thông tin của claimRequest theo id thông qa service
     @GetMapping("/{id}")
-    public ResponseEntity<CClaimRequest> getById(@PathVariable Long id){
+    public ResponseEntity<ClaimRequest> getById(@PathVariable Long id){
         try {
-            return new ResponseEntity<>(cClaimRequestService.getById(id), HttpStatus.OK);
+            return new ResponseEntity<>(claimRequestService.getById(id), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -42,9 +42,9 @@ public class CClaimController {
 
     // tạo mơi claimRequest thông qa service
     @PostMapping("/")
-    public ResponseEntity<?> createClaim(@ModelAttribute CClaimRequest claimRequest){
+    public ResponseEntity<?> createClaim(@ModelAttribute ClaimRequest claimRequest){
         try {
-            CClaimRequest cClaimRequest = cClaimRequestService.createClaimRequest(claimRequest);
+            ClaimRequest cClaimRequest = claimRequestService.createClaimRequest(claimRequest);
             return new ResponseEntity<>(cClaimRequest , HttpStatus.CREATED);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -53,10 +53,10 @@ public class CClaimController {
 
     // cập nhật claimRequest thông qa service
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateClaimRequest(@ModelAttribute  CClaimRequest claimRequest,
+    public ResponseEntity<?> updateClaimRequest(@ModelAttribute ClaimRequest claimRequest,
                                                 @PathVariable Long id){
         try {
-            CClaimRequest cClaimRequest = cClaimRequestService.updateClaimRequest(claimRequest, id);
+            ClaimRequest cClaimRequest = claimRequestService.updateClaimRequest(claimRequest, id);
             return new ResponseEntity<>(cClaimRequest , HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -67,7 +67,7 @@ public class CClaimController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClaimRequest(@PathVariable Long id){
         try {
-            cClaimRequestService.deleteClaimRequest(id);
+            claimRequestService.deleteClaimRequest(id);
             return ResponseEntity.ok().body(String.format("Delete Claim Request Successfully!"));
         } catch (Exception e){
             return ResponseEntity.internalServerError().body(String.format("Delete Claim Request Failed!"));

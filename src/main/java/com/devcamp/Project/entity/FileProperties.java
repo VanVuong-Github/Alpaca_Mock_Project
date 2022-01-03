@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "file")
-public class CFileProperties {
+public class FileProperties {
 
     private String uploadDir;
 

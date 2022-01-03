@@ -15,7 +15,7 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CContract {
+public class Contract {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
@@ -37,5 +37,5 @@ public class CContract {
     @ManyToOne
     @JsonIgnore
     @JoinColumn( name = "customer_id")
-    private CCustomer customer;
+    private Customer customer;
 }

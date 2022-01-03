@@ -1,12 +1,10 @@
 package com.devcamp.Project.service;
 
-import com.devcamp.Project.entity.CClaimRequest;
-import com.devcamp.Project.entity.CFile;
-import com.devcamp.Project.exception.CFileStorageException;
-import com.devcamp.Project.exception.CMyFileNotFoundException;
-import com.devcamp.Project.entity.CFileProperties;
-import com.devcamp.Project.repository.IClaimRequestRepository;
-import com.devcamp.Project.repository.IFileRepository;
+import com.devcamp.Project.entity.File;
+import com.devcamp.Project.exception.FileStorageException;
+import com.devcamp.Project.exception.MyFileNotFoundException;
+import com.devcamp.Project.entity.FileProperties;
+import com.devcamp.Project.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -23,32 +21,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CFileService {
+public class FileService {
 
     private final Path fileStorageLocation;
 
     @Autowired
-    public CFileService(CFileProperties fileStorageProperties) {
+    public FileService(FileProperties fileStorageProperties) {
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
                 .toAbsolutePath().normalize();
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
-            throw new CFileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
+            throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
     }
 
     @Autowired
-    IFileRepository iFileRepository;
+    FileRepository fileRepository;
 
 
     // lưu trữ file
-    public List<CFile> storeFile(List<MultipartFile> files, long id) throws IOException {
+    public List<File> storeFile(List<MultipartFile> files, long id) throws IOException {
 
         // Lưu ảnh vào DB
-        List<CFile> filesToSave = new ArrayList<>();
+        List<File> filesToSave = new ArrayList<>();
         for (MultipartFile file: files) {
-            CFile fileEntity = CFile.builder()
+            File fileEntity = File.builder()
                     .fileName(StringUtils.cleanPath(file.getOriginalFilename()))
                     .fileType(file.getContentType())
                     .size(file.getSize())
@@ -63,17 +61,17 @@ public class CFileService {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
         }
 
-        return iFileRepository.saveAll(filesToSave);
+        return fileRepository.saveAll(filesToSave);
     }
 
     // lấy tất cả file trong Db
-    public List<CFile> getAll(){
-        return iFileRepository.findAll();
+    public List<File> getAll(){
+        return fileRepository.findAll();
     }
 
     // lấy file bằng id trong Db
-    public CFile getById(Long id){
-        return iFileRepository.findById(id).orElse(null);
+    public File getById(Long id){
+        return fileRepository.findById(id).orElse(null);
     }
 
     // lấy file luu trong folder
@@ -84,15 +82,15 @@ public class CFileService {
             if(resource.exists()) {
                 return resource;
             } else {
-                throw new CMyFileNotFoundException("File not found " + fileName);
+                throw new MyFileNotFoundException("File not found " + fileName);
             }
         } catch (MalformedURLException ex) {
-            throw new CMyFileNotFoundException("File not found " + fileName, ex);
+            throw new MyFileNotFoundException("File not found " + fileName, ex);
         }
     }
 
     // xóa file theo id của claimRequest
     public void deleteAllFileByClaimRequestId(Long id){
-        iFileRepository.deleteAllByClaimRequestId(id);
+        fileRepository.deleteAllByClaimRequestId(id);
     }
 }

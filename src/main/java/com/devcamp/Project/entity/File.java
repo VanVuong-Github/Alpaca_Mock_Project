@@ -1,11 +1,8 @@
 package com.devcamp.Project.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +12,7 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name = "files")
-public class CFile {
+public class File {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)

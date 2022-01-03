@@ -1,15 +1,15 @@
 package com.devcamp.Project.repository;
 
-import com.devcamp.Project.entity.CFile;
+import com.devcamp.Project.entity.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface IFileRepository extends JpaRepository<CFile, Long> {
+public interface FileRepository extends JpaRepository<File, Long> {
 
-    List<CFile> findByClaimRequestId(Long id);
+    List<File> findByClaimRequestId(Long id);
 
     void deleteAllByClaimRequestId(Long id);
 }

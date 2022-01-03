@@ -1,13 +1,9 @@
 package com.devcamp.Project.entity;
 
-import com.devcamp.Project.entity.CCustomer;
-import com.devcamp.Project.entity.CFile;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -17,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table( name = "claim_request")
-public class CClaimRequest {
+public class ClaimRequest {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)

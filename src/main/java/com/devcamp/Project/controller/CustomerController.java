@@ -1,8 +1,8 @@
 package com.devcamp.Project.controller;
 
-import com.devcamp.Project.dto.CCustomerDTO;
-import com.devcamp.Project.entity.CCustomer;
-import com.devcamp.Project.service.CCustomerService;
+import com.devcamp.Project.dto.CustomerDTO;
+import com.devcamp.Project.entity.Customer;
+import com.devcamp.Project.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/customer")
-public class CCustomerController {
+public class CustomerController {
 
     @Autowired
-    CCustomerService cCustomerService;
+    CustomerService cCustomerService;
 
     // lấy tất cả thông tin khách hàng thông service
     @GetMapping("/")
-    public ResponseEntity<List<CCustomerDTO>> getAll(){
+    public ResponseEntity<List<CustomerDTO>> getAll(){
         try {
             return new  ResponseEntity<>(cCustomerService.getAllCustomer(), HttpStatus.OK);
         } catch(Exception e) {
@@ -29,7 +29,7 @@ public class CCustomerController {
 
     // lấy tất cả thông tin khách hàng bằng id thông service
     @GetMapping("/{id}")
-    public ResponseEntity<CCustomerDTO> getCustomerById(@PathVariable Long id){
+    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id){
         try {
             return new ResponseEntity<>(cCustomerService.getCustomerById(id), HttpStatus.OK);
         } catch (Exception e){
@@ -39,7 +39,7 @@ public class CCustomerController {
 
     // tạo mới khách hàng
     @PostMapping("/")
-    public ResponseEntity<Object> createCustomer(@RequestBody CCustomer customer){
+    public ResponseEntity<Object> createCustomer(@RequestBody Customer customer){
         try {
             return new ResponseEntity<>(cCustomerService.createCustomer(customer), HttpStatus.CREATED);
         } catch (Exception e){
@@ -49,7 +49,7 @@ public class CCustomerController {
 
     // cập nhật khách hàng
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody CCustomer inputCustomer){
+    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody Customer inputCustomer){
         try {
             return new ResponseEntity<>(cCustomerService.updateCustomer(inputCustomer, id), HttpStatus.OK);
         } catch (Exception e){

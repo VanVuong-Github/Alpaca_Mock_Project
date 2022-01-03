@@ -1,6 +1,6 @@
 package com.devcamp.Project.dto;
 
-import com.devcamp.Project.entity.CContract;
+import com.devcamp.Project.entity.Contract;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class CCustomerDTO {
+public class CustomerDTO {
     private String name;
     private String gender;
     private String cardId;
@@ -20,5 +20,5 @@ public class CCustomerDTO {
     private Date dateOfBirth;
     private String address;
     private String occupation;
-    private List<CContract> contract;
+    private List<Contract> contract;
 }
