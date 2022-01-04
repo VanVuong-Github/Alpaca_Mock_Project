@@ -25,6 +25,7 @@ public class ContractService {
 
     // lấy thông tin hợp đồng theo id
     public Contract getContractById(final Long id){
+
         return contractRepository.findById(id).orElse(null);
     }
 

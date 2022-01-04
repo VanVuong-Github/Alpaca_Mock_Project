@@ -37,12 +37,21 @@ public class ClaimController {
             return new ResponseEntity<>(claimRequestService.getById(id), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            // controller advice
+            // exception handle
         }
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(Exception e){
+
+        return null;
     }
 
     // tạo mơi claimRequest thông qa service
     @PostMapping("/")
-    public ResponseEntity<?> createClaim(@ModelAttribute ClaimRequest claimRequest){
+    // requestBody
+    public ResponseEntity<?> createClaimRequest(@ModelAttribute ClaimRequest claimRequest){
         try {
             ClaimRequest cClaimRequest = claimRequestService.createClaimRequest(claimRequest);
             return new ResponseEntity<>(cClaimRequest , HttpStatus.CREATED);

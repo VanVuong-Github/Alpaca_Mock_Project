@@ -4,14 +4,22 @@ import com.devcamp.Project.dto.CustomerDTO;
 import com.devcamp.Project.entity.Customer;
 import com.devcamp.Project.mapped.CustomerMapped;
 import com.devcamp.Project.repository.CustomerRepository;
+import com.devcamp.Project.security.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
+	private static Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
 	@Autowired
 	private CustomerRepository customerRepository;
@@ -40,7 +48,10 @@ public class CustomerService {
 
 	// cập nhật thông tin khách hàng
 	public CustomerDTO updateCustomer(Customer inputCustomer, Long customerId) {
-		Customer customer = customerRepository.findById(customerId).get();
+		Optional<Customer> customer1 = customerRepository.findById(customerId);
+		// validate Optional
+		// sonarlint.
+		Customer customer = customer1.get();
 		customer.setName(inputCustomer.getName());
 		customer.setGender(inputCustomer.getGender());
 		customer.setCardId(inputCustomer.getCardId());
@@ -56,6 +67,8 @@ public class CustomerService {
 
 	// xóa thông tin khách hàng
 	public void deleteCustomerById(final Long id){
-		customerRepository.deleteById(id);
+		// hard delete
+		// soft delete
+		customerRepository.deleteAll();
 	}
 }

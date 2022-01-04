@@ -28,12 +28,13 @@ public class ContractController {
 
     // lấy thông tin hợp đồng bằng id thông qa service
     @GetMapping("/{id}")
-    public ResponseEntity<Contract> getContractById(@PathVariable Long id){
-        try {
-            return new ResponseEntity<>(contractService.getContractById(id), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Contract getContractById(@PathVariable Long id){
+        return contractService.getContractById(id);
+//        try {
+//            return new ResponseEntity<>(contractService.getContractById(id), HttpStatus.OK);
+//        } catch (Exception e){
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
     }
 
     // lấy thông tin hợp đồng bằng id của khách hàng thông qa service

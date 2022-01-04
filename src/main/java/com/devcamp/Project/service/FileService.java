@@ -46,14 +46,14 @@ public class FileService {
         // Lưu ảnh vào DB
         List<File> filesToSave = new ArrayList<>();
         for (MultipartFile file: files) {
-            File fileEntity = File.builder()
-                    .fileName(StringUtils.cleanPath(file.getOriginalFilename()))
-                    .fileType(file.getContentType())
-                    .size(file.getSize())
-                    .data(file.getBytes())
-                    .claimRequestId(id)
-                    .build();
-            filesToSave.add(fileEntity);
+//            File fileEntity = File.builder()
+//                    .fileName(StringUtils.cleanPath(file.getOriginalFilename()))
+//                    .fileType(file.getContentType())
+//                    .size(file.getSize())
+//                    .data(file.getBytes())
+//                    .claimRequestId(id)
+//                    .build();
+//            filesToSave.add(fileEntity);
 
             // Lưu ảnh vào folder pictures trong project
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
