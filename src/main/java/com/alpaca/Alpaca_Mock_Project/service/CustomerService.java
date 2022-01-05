@@ -14,16 +14,18 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    private CustomerMapper customerMapper;
+    private final CustomerMapper customerMapper;
+
+    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper) {
+        this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
+    }
 
     @Transactional
     public CustomerDto getCustomerById(final Long id){
         return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.findById(id).orElse(null));
-        //return customerRepository.findById(id).orElse(null);
     }
 
     @Transactional
@@ -34,13 +36,13 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer saveCustomer(final Customer customer){
-        return customerRepository.save(customer);
+    public void saveCustomer(final CustomerDto customer){
+        customerRepository.save(CustomerMapper.INSTANCE.customerDtoToCustomer(customer));
     }
 
     @Transactional
-    public CustomerDto updateCustomer(final Customer customer, final Long id){
-        Customer oldCustomer = customerRepository.findById(id).orElse(null); // this is the customer before update
+    public void updateCustomer(final CustomerDto customer, final Long id){
+        Customer oldCustomer = customerRepository.findById(id).orElseThrow(NullPointerException::new); // this is the customer before update
         oldCustomer.setName(customer.getName());
         oldCustomer.setGender(customer.getGender());
         oldCustomer.setCardId(customer.getCardId());
@@ -49,12 +51,12 @@ public class CustomerService {
         oldCustomer.setDateOfBirth(customer.getDateOfBirth());
         oldCustomer.setAddress(customer.getAddress());
         oldCustomer.setOccupation(customer.getOccupation());
-        return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.save(oldCustomer));
-        //return customerRepository.save(oldCustomer);
+        CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.save(oldCustomer));
     }
 
     @Transactional
     public void deleteCustomerById(final Long id){
-        customerRepository.deleteById(id);
+        Customer oldCustomer = customerRepository.findById(id).orElseThrow(NullPointerException::new);
+        customerRepository.delete(oldCustomer);
     }
 }

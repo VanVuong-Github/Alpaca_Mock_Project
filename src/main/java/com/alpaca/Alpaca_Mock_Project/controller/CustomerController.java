@@ -13,39 +13,38 @@ import java.util.List;
 @RequestMapping("/customer")
 public class CustomerController {
 
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping
-    public List<CustomerDto> findAll(){
-        return customerService.findAll();
+    public ResponseEntity<List<CustomerDto>> findAll(){
+        return ResponseEntity.ok().body(customerService.findAll());
     }
 
     @GetMapping("/{id}")
-    public CustomerDto getCustomerById(@PathVariable("id") final Long id){
-        return customerService.getCustomerById(id);
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("id") final Long id){
+        return ResponseEntity.ok().body(customerService.getCustomerById(id));
     }
 
     @PostMapping
-    public Customer createCustomer(@RequestBody final Customer customer){
-        return customerService.saveCustomer(customer);
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody final CustomerDto customer){
+        customerService.saveCustomer(customer);
+        return ResponseEntity.ok().body(customer);
     }
 
     @PutMapping("/{id}")
-    public CustomerDto updateCustomer(@RequestBody final Customer customer,
+    public ResponseEntity<CustomerDto> updateCustomer(@RequestBody final CustomerDto customer,
                                    @PathVariable("id") final Long id){
-        return customerService.updateCustomer(customer, id);
+        customerService.updateCustomer(customer, id);
+        return ResponseEntity.ok().body(customer);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable("id") final Long id){
-        try {
-            customerService.deleteCustomerById(id);
-            return ResponseEntity.ok().body("Customer Deleted!");
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Customer Deleting Failed!");
-        }
-
+    public ResponseEntity<String> deleteCustomer(@PathVariable("id") final Long id){
+        customerService.deleteCustomerById(id);
+        return ResponseEntity.ok().body("Customer Deleted!");
     }
 }

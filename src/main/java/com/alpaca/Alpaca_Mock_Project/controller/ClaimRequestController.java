@@ -1,75 +1,58 @@
 package com.alpaca.Alpaca_Mock_Project.controller;
 
 import com.alpaca.Alpaca_Mock_Project.dto.ClaimRequestDto;
-import com.alpaca.Alpaca_Mock_Project.dto.ClaimRequestResponse;
 import com.alpaca.Alpaca_Mock_Project.service.ClaimRequestService;
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/claim-request")
 public class ClaimRequestController {
 
-    @Autowired
-    private ClaimRequestService claimRequestService;
+    private final ClaimRequestService claimRequestService;
+
+    public ClaimRequestController(ClaimRequestService claimRequestService) {
+        this.claimRequestService = claimRequestService;
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getClaimRequestById(@PathVariable("id") final Long id){
-        try {
-            return ResponseEntity.ok().body(claimRequestService.getClaimRequestById(id));
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body("Claim Request Not Found! ");
-        }
+    public ResponseEntity<ClaimRequestDto> getClaimRequestById(@PathVariable("id") final Long id){
+        return ResponseEntity.ok().body(claimRequestService.getClaimRequestById(id));
     }
 
     @GetMapping("/by")
-    public ResponseEntity<?> getClaimRequestByCustomerNameAndCardId(@RequestParam("customerName") final String customerName,
+    public ResponseEntity<ClaimRequestDto> getClaimRequestByCustomerNameAndCardId(@RequestParam("customerName") final String customerName,
                                                                     @RequestParam("cardId") final String cardId){
-        try {
-            return ResponseEntity.ok().body(claimRequestService.getClaimRequestByCustomerNameAndCardId(customerName, cardId));
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Claim Request Not Found! ");
-        }
+        return ResponseEntity.ok().body(claimRequestService.getClaimRequestByCustomerNameAndCardId(customerName, cardId));
     }
 
     @GetMapping
-    public List<ClaimRequestResponse> findAll(){
-        return claimRequestService.findAll();
+    public ResponseEntity<List<ClaimRequestDto>> findAll(){
+        return ResponseEntity.ok().body(claimRequestService.findAll());
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createClaimRequest(@ModelAttribute final ClaimRequestDto claimRequestDto){
-        try {
-            claimRequestService.createClaimRequest(claimRequestDto);
-            return ResponseEntity.ok().body(String.format("Create Claim Request Successfully!"));
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body(String.format("Create Claim Request Failed! "));
-        }
+    @PostMapping
+    public ResponseEntity<ClaimRequestDto> createClaimRequest(@RequestBody final ClaimRequestDto claimRequestDto){
+        claimRequestService.createClaimRequest(claimRequestDto);
+        return ResponseEntity.ok().body(claimRequestDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateClaimRequest(@ModelAttribute final ClaimRequestDto claimRequestDto,
-                                           @PathVariable("id") final Long id){
-        try {
-            claimRequestService.updateClaimRequest(claimRequestDto, id);
-            return ResponseEntity.ok().body(String.format("Update Claim Request Successfully!"));
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body(String.format("Update Claim Request Failed! "));
-        }
+    public ResponseEntity<ClaimRequestDto> updateClaimRequest(@RequestBody final ClaimRequestDto claimRequestDto,
+                                           @PathVariable("id") @NotNull final Long id){
+        claimRequestService.updateClaimRequest(claimRequestDto, id);
+        return ResponseEntity.ok().body(claimRequestDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteClaimRequest(@PathVariable("id") final Long id){
-        try {
-            claimRequestService.deleteClaimRequest(id);
-            return ResponseEntity.ok().body("Claim Request Deleted!");
-        } catch (Exception e){
-            return ResponseEntity.badRequest().body("Claim Request Deleting Failed! ");
-        }
+    public ResponseEntity<String> deleteClaimRequest(@PathVariable("id") @NotNull final Long id){
+        claimRequestService.deleteClaimRequest(id);
+        return ResponseEntity.ok().body("Claim Request Deleted!");
     }
 }

@@ -1,90 +1,72 @@
 package com.alpaca.Alpaca_Mock_Project.service;
 
 import com.alpaca.Alpaca_Mock_Project.dto.ClaimRequestDto;
-import com.alpaca.Alpaca_Mock_Project.dto.ClaimRequestResponse;
-import com.alpaca.Alpaca_Mock_Project.dto.FileResponse;
 import com.alpaca.Alpaca_Mock_Project.entity.ClaimRequest;
-import com.alpaca.Alpaca_Mock_Project.entity.FileEntity;
+import com.alpaca.Alpaca_Mock_Project.mapper.ClaimRequestMapper;
 import com.alpaca.Alpaca_Mock_Project.repository.ClaimRequestRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class ClaimRequestService {
 
-    @Autowired
-    private ClaimRequestRepository claimRequestRepository;
+    private static final Logger logger = Logger.getLogger(ClaimRequestService.class.getName());
 
-    @Autowired
-    private FileService fileService;
+    private final ClaimRequestRepository claimRequestRepository;
 
-    @Transactional
-    public ClaimRequestResponse getClaimRequestByCustomerNameAndCardId(final String customerName, final String cardId){
-        return mapToClaimRequestResponse(claimRequestRepository.findByCustomerNameContainingIgnoreCaseAndCardIdContainingIgnoreCaseOrderByCustomerNameAsc(customerName, cardId).orElse(null));
+    private final ClaimRequestMapper claimRequestMapper;
+
+    public ClaimRequestService(ClaimRequestRepository claimRequestRepository, ClaimRequestMapper claimRequestMapper) {
+        this.claimRequestRepository = claimRequestRepository;
+        this.claimRequestMapper = claimRequestMapper;
     }
 
     @Transactional
-    public List<ClaimRequestResponse> findAll(){
-        return claimRequestRepository.findAll().stream().map(this::mapToClaimRequestResponse).collect(Collectors.toList());
+    public ClaimRequestDto getClaimRequestByCustomerNameAndCardId(final String customerName, final String cardId){
+        logger.log(Level.INFO, "Getting Claim Request CustomerName and Customer Card ID");
+        return ClaimRequestMapper.INSTANCE.claimRequestToClaimRequestDto(claimRequestRepository.findByCustomerNameContainingIgnoreCaseAndCardIdContainingIgnoreCaseOrderByCustomerNameAsc(customerName, cardId)
+                .orElse(null));
     }
 
     @Transactional
-    public ClaimRequestResponse getClaimRequestById(final Long id){
-        return mapToClaimRequestResponse(claimRequestRepository.findById(id).orElse(null));
+    public List<ClaimRequestDto> findAll(){
+        logger.log(Level.INFO, "Finding all Claim Request");
+        return claimRequestRepository.findAll().stream().map(claimRequestMapper::claimRequestToClaimRequestDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public void createClaimRequest(final ClaimRequestDto claimRequestDto) throws IOException {
-        // create request
-        ClaimRequest claimRequest = ClaimRequest.builder()
-                .customerName(claimRequestDto.getCustomerName())
-                .cardId(claimRequestDto.getCardId())
-                .build();
-        try {
-            //save file with claim request id
-            List<FileEntity> photos = fileService.saveAll(claimRequestDto.getPhotos()
-                    , claimRequestRepository.save(claimRequest).getId());
-        } catch (Exception e){
-            throw new IOException("Create Claim Request Failed: " + e.getMessage());
-        }
+    public ClaimRequestDto getClaimRequestById(final Long id){
+        logger.log(Level.INFO, "Getting Claim Request by ID");
+        return ClaimRequestMapper.INSTANCE.claimRequestToClaimRequestDto(claimRequestRepository.findById(id).orElse(null));
+    }
+
+    @Transactional
+    public void createClaimRequest(final ClaimRequestDto claimRequestDto){
+        logger.log(Level.INFO, "Creating new Claim Request...");
+        claimRequestRepository.save(ClaimRequestMapper.INSTANCE.claimRequestDtoToClaimRequest(claimRequestDto));
     }
 
     @Transactional
     public void updateClaimRequest(final ClaimRequestDto claimRequestDto,
-                                           final Long id) throws IOException {
-        ClaimRequest oldClaimRequest = claimRequestRepository.findById(id).orElse(null); //this is the request before change
+                                           final Long id){
+        logger.log(Level.INFO, "Updating all Claim Request");
+        ClaimRequest oldClaimRequest = claimRequestRepository.findById(id).orElseThrow(NullPointerException::new); //this is the request before change
         oldClaimRequest.setCustomerName(claimRequestDto.getCustomerName());
         oldClaimRequest.setCardId(claimRequestDto.getCardId());
-        claimRequestRepository.save(oldClaimRequest);
-        // delete all old photos
-        fileService.deleteAllByRequestId(oldClaimRequest.getId());
-        // then save the new ones
-        List<FileEntity> photos = fileService.saveAll(claimRequestDto.getPhotos(), oldClaimRequest.getId());
+        oldClaimRequest.setUrls(claimRequestDto.getUrls());
+        claimRequestRepository.saveAndFlush(oldClaimRequest);
     }
 
     @Transactional
     public void deleteClaimRequest(final Long id){
-        claimRequestRepository.deleteById(id);
-        fileService.deleteAllByRequestId(id);
+        logger.log(Level.INFO, "Deleting all Claim Request");
+        ClaimRequest claimRequestToDelete = claimRequestRepository.findById(id).orElseThrow(NullPointerException::new);
+        claimRequestRepository.delete(claimRequestToDelete);
     }
 
-    /**
-     * map a ClaimRequest to ClaimRequestResponse
-     * @param claimRequest
-     * @return claimRequestResponse
-     */
-    private ClaimRequestResponse mapToClaimRequestResponse(ClaimRequest claimRequest){
-        List<FileResponse> photos = fileService.findAllByRequestId(claimRequest.getId());
-        ClaimRequestResponse claimRequestResponse = ClaimRequestResponse.builder()
-                .customerName(claimRequest.getCustomerName())
-                .cardId(claimRequest.getCardId())
-                .photos(photos)
-                .build();
-        return claimRequestResponse;
-    }
 }
