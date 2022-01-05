@@ -1,15 +1,18 @@
 package com.devcamp.Project.service;
 
+import com.devcamp.Project.dto.ClaimRequestDTO;
 import com.devcamp.Project.entity.ClaimRequest;
-import com.devcamp.Project.entity.File;
+import com.devcamp.Project.mapped.ClaimRequestMapped;
 import com.devcamp.Project.repository.ClaimRequestRepository;
-import com.devcamp.Project.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClaimRequestService {
@@ -17,53 +20,52 @@ public class ClaimRequestService {
     ClaimRequestRepository claimRequestRepository;
 
     @Autowired
-    FileRepository fileRepository;
-
-    @Autowired
     FileService fileService;
 
+    @Autowired
+    ClaimRequestMapped claimRequestMapped;
+
     // lấy tất cả thông tin claimRequest
-    public List<ClaimRequest> getAll(){
-        return claimRequestRepository.findAll();
+    @Transactional
+    public List<ClaimRequestDTO> getAll(){
+
+        return claimRequestRepository.findAll().stream()
+                .map(claimRequestMapped::claimRequestToClaimRequestDTO).collect(Collectors.toList());
     }
 
     // lấy tất cả thông tin claimRequest theo id
-    public ClaimRequest getById(Long id){
-        return claimRequestRepository.findById(id).orElse(null);
+    @Transactional
+    public ClaimRequestDTO getById(Long id){
+
+        //return claimRequestRepository.findById(id).orElse(null);
+        return ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.findById(id).orElse(null));
     }
 
     // tạo mới claimRequest
-    public ClaimRequest createClaimRequest(ClaimRequest cClaimRequest) throws IOException {
-
-        ClaimRequest claimRequest = ClaimRequest.builder()
-                .customerName(cClaimRequest.getCustomerName())
-                .customerCardId(cClaimRequest.getCustomerCardId())
-                .build();
-
-        List<File> files = fileService.storeFile(cClaimRequest.getFiles(), claimRequestRepository.save(claimRequest).getId());
-
-        return claimRequest;
+    @Transactional
+    public ClaimRequestDTO createClaimRequest(ClaimRequest cClaimRequest) {
+        //return claimRequestRepository.saveAndFlush(cClaimRequest);
+        return ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.saveAndFlush(cClaimRequest));
     }
 
     // cập nhật thông tin claimRequest
     @Transactional
-    public ClaimRequest updateClaimRequest(ClaimRequest inputClaimRequest, Long id) throws IOException {
+    public ClaimRequestDTO updateClaimRequest(ClaimRequest inputClaimRequest, Long id)  {
         ClaimRequest claimRequest = claimRequestRepository.findById(id).orElse(null); //this is the request before change
         claimRequest.setCustomerName(inputClaimRequest.getCustomerName());
         claimRequest.setCustomerCardId(inputClaimRequest.getCustomerCardId());
-
-        if ( inputClaimRequest.getFiles() != null){
-            fileService.deleteAllFileByClaimRequestId(id);
-            List<File> files = fileService.storeFile(inputClaimRequest.getFiles(), id);
-        }
-
-        return  claimRequestRepository.save(claimRequest);
+        return  ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.saveAndFlush(claimRequest));
     }
 
     // xóa thông tin claimRequest và file kèm theo
-    public void deleteClaimRequest(Long id){
-        claimRequestRepository.deleteById(id);
-        fileService.deleteAllFileByClaimRequestId(id);
-
+    @Transactional
+    public ResponseEntity<?> deleteClaimRequest(Long id){
+        Optional<ClaimRequest> claimRequest = claimRequestRepository.findById(id);
+        if ( claimRequest.isPresent()){
+            claimRequestRepository.deleteById(id);
+            return ResponseEntity.ok("Deleted Claim Request Success");
+        } else {
+            return ResponseEntity.ok("Deleted Claim Request Fail!");
+        }
     }
 }

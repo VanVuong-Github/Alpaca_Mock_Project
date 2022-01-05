@@ -50,11 +50,6 @@ public class CustomerController {
     // xóa khách hàng
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable Long id){
-        try {
-            cCustomerService.deleteCustomerById(id);
-            return ResponseEntity.ok().body(String.format("Delete Customer Successfully!"));
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body(String.format("Delete Customer Failed!"));
-        }
+       return cCustomerService.deleteCustomerById(id);
     }
 }

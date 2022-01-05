@@ -1,5 +1,6 @@
 package com.devcamp.Project.repository;
 
+import com.devcamp.Project.dto.ContractDTO;
 import com.devcamp.Project.entity.Contract;
 import org.springframework.data.jpa.repository.JpaRepository;
 

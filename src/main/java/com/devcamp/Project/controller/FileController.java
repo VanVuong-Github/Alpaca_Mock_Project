@@ -1,6 +1,8 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.entity.ClaimRequest;
 import com.devcamp.Project.entity.File;
+import com.devcamp.Project.repository.ClaimRequestRepository;
 import com.devcamp.Project.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,46 +13,45 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/file")
 public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
     private FileService fileStorageService;
 
-    // lấy danh sách tất cả file từ Db
-    @GetMapping("/")
-    public ResponseEntity<List<File>> getAll() {
-        try {
-            return new ResponseEntity<>(fileStorageService.getAll(), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PostMapping("/uploadFile/{claimId}")
+    public File uploadFile(@RequestBody MultipartFile file, @PathVariable Long claimId) {
+
+        String fileName = fileStorageService.storeFile(file);
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        return new File(fileName, fileDownloadUri,
+                file.getContentType(), file.getSize(),claimId);
     }
 
-    // lấy file theo id từ DB
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
-            File file = fileStorageService.getById(id);
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
-                    .contentType(MediaType.valueOf(file.getFileType()))
-                    .body(file.getData());
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PostMapping("/uploadMultipleFiles/{claimId}")
+    public List<File> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @PathVariable Long claimId) {
+        return Arrays.asList(files)
+                .stream()
+                .map(file -> uploadFile(file, claimId))
+                .collect(Collectors.toList());
     }
 
-    // lấy ảnh theo tên trong folder project
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource

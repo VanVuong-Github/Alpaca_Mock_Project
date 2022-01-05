@@ -1,12 +1,9 @@
 package com.devcamp.Project.controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.devcamp.Project.repository.TokenRepository;
-import com.devcamp.Project.repository.UserRepository;
+import com.devcamp.Project.service.RedisService;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +33,21 @@ public class AuthController {
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    RedisService redisService;
+
     @PostMapping("/register")
     public User register(@RequestBody User user){
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         return userService.createUser(user);
+    }
+
+    @GetMapping("/redis")
+    public Object a(){
+
+        RedissonClient redissonClient = Redisson.create(redisService.config());
+        redissonClient.getBucket("test1").set("khanh1");
+        return redissonClient.getBucket("test1").get();
     }
 
     @PostMapping("/login")

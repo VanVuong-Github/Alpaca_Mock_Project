@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class CustomerService {
 	private CustomerMapped customerMapped;
 
 	// lấy tất cả thông tin khách hàng theo Dto
+	@Transactional
 	public List<CustomerDTO> getAllCustomer() {
 		//return iCustomerRepository.findAll();
 		return customerRepository.findAll().stream()
@@ -35,18 +37,21 @@ public class CustomerService {
 	}
 
 	// lấy tất cả thông tin khách hàng bằng id theo Dto
+	@Transactional
 	public CustomerDTO getCustomerById(final Long id) {
 		//return iCustomerRepository.findById(id).orElse(null);
 		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.findById(id).get());
 	}
 
 	// tao thông tin khách hàng
+	@Transactional
 	public CustomerDTO createCustomer(Customer inputCustomer) {
 		//return iCustomerRepository.save(inputCustomer);
 		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.save(inputCustomer));
 	}
 
 	// cập nhật thông tin khách hàng
+	@Transactional
 	public CustomerDTO updateCustomer(Customer inputCustomer, Long customerId) {
 		Optional<Customer> customer1 = customerRepository.findById(customerId);
 		// validate Optional
@@ -66,9 +71,20 @@ public class CustomerService {
 	}
 
 	// xóa thông tin khách hàng
-	public void deleteCustomerById(final Long id){
+	@Transactional
+	public ResponseEntity<Object> deleteCustomerById(final Long id){
 		// hard delete
 		// soft delete
-		customerRepository.deleteAll();
+			Optional<Customer> customer = customerRepository.findById(id);
+			if(customer.isPresent()){
+				if (customer.get().getContract().equals(null)){
+					customerRepository.deleteById(id);
+					return ResponseEntity.accepted().body("Customer don't have contract! Can delete.");
+				} else {
+					return ResponseEntity.badRequest().body("Customer have contract! Can't delete.");
+				}
+			} else {
+				return ResponseEntity.badRequest().body("Customer don't exist!");
+			}
 	}
 }

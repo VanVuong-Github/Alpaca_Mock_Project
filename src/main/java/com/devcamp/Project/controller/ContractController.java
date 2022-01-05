@@ -1,5 +1,6 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.dto.ContractDTO;
 import com.devcamp.Project.entity.Contract;
 import com.devcamp.Project.service.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,64 +20,38 @@ public class ContractController {
 
     // lấy thông tin hợp đồng thông qa service
     @GetMapping("/")
-    public ResponseEntity<List<Contract>> getAllContract(){
-        try {
-            return new  ResponseEntity<>(contractService.getAllContract(), HttpStatus.OK);
-        } catch(Exception e) {
-            return new  ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<ContractDTO> getAllContract() {
+        return contractService.getAllContract();
     }
 
     // lấy thông tin hợp đồng bằng id thông qa service
     @GetMapping("/{id}")
-    public Contract getContractById(@PathVariable Long id){
+    public ContractDTO getContractById(@PathVariable Long id) {
         return contractService.getContractById(id);
-//        try {
-//            return new ResponseEntity<>(contractService.getContractById(id), HttpStatus.OK);
-//        } catch (Exception e){
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
     }
 
     // lấy thông tin hợp đồng bằng id của khách hàng thông qa service
     @GetMapping("/customer/{id}")
-    public ResponseEntity<List<Contract>> getContractByCustomerId(@PathVariable Long id){
-        try {
-            return new ResponseEntity<>(contractService.getContractByCustomerId(id), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Contract> getContractByCustomerId(@PathVariable Long id) {
+        return contractService.getContractByCustomerId(id);
     }
 
     // tạo mới hợp đồng
     @PostMapping("/customer/{id}")
-    public ResponseEntity<Object> createContract(@PathVariable Long id, @RequestBody Contract inputContract){
-        try {
-            return new ResponseEntity<>(contractService.createContract(id, inputContract), HttpStatus.CREATED);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Object createContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) {
+        return contractService.createContract(id, inputContract);
     }
 
     // cập nhật hợp đồng
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateContract(@PathVariable Long id, @RequestBody Contract inputContract){
-        try {
-            return new ResponseEntity<>(contractService.updateContract(id, inputContract), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Object updateContract(@PathVariable Long id, @RequestBody Contract inputContract) {
+        return contractService.updateContract(id, inputContract);
+
     }
 
     // xóa hợp đồng
     @DeleteMapping("/")
-    public ResponseEntity<Object> deleteContract(@PathVariable Long id){
-        try {
-            contractService.deleteContractById(id);
-            return ResponseEntity.ok().body(String.format("Delete Contract Successfully!"));
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body(String.format("Delete Contract Failed!"));
-        }
+    public ResponseEntity<?> deleteContract(@PathVariable Long id) {
+        return contractService.deleteContractById(id);
     }
-
 }

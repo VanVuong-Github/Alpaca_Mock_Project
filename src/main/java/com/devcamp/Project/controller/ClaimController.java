@@ -1,5 +1,6 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.dto.ClaimRequestDTO;
 import com.devcamp.Project.entity.ClaimRequest;
 import com.devcamp.Project.repository.ClaimRequestRepository;
 import com.devcamp.Project.service.ClaimRequestService;
@@ -8,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,64 +25,34 @@ public class ClaimController {
 
     // lấy tất cả thông tin của claimRequest thông qa service
     @GetMapping("/")
-    public ResponseEntity<List<ClaimRequest>> getAll(){
-        try {
-            return new ResponseEntity<>(claimRequestService.getAll(), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<ClaimRequestDTO> getAll(){
+        return claimRequestService.getAll();
     }
 
     // lấy tất cả thông tin của claimRequest theo id thông qa service
     @GetMapping("/{id}")
-    public ResponseEntity<ClaimRequest> getById(@PathVariable Long id){
-        try {
-            return new ResponseEntity<>(claimRequestService.getById(id), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-            // controller advice
-            // exception handle
-        }
-    }
+    public ClaimRequestDTO getById(@PathVariable Long id){
+        return claimRequestService.getById(id);
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(Exception e){
-
-        return null;
     }
 
     // tạo mơi claimRequest thông qa service
     @PostMapping("/")
     // requestBody
-    public ResponseEntity<?> createClaimRequest(@ModelAttribute ClaimRequest claimRequest){
-        try {
-            ClaimRequest cClaimRequest = claimRequestService.createClaimRequest(claimRequest);
-            return new ResponseEntity<>(cClaimRequest , HttpStatus.CREATED);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ClaimRequestDTO createClaimRequest(@Valid @RequestParam ClaimRequest claimRequest){
+        return claimRequestService.createClaimRequest(claimRequest);
     }
 
     // cập nhật claimRequest thông qa service
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateClaimRequest(@ModelAttribute ClaimRequest claimRequest,
-                                                @PathVariable Long id){
-        try {
-            ClaimRequest cClaimRequest = claimRequestService.updateClaimRequest(claimRequest, id);
-            return new ResponseEntity<>(cClaimRequest , HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ClaimRequestDTO updateClaimRequest(@RequestParam ClaimRequest claimRequest,
+                                                @PathVariable Long id) {
+        return claimRequestService.updateClaimRequest(claimRequest, id);
     }
 
     // xóa claimRequest thông qa service
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClaimRequest(@PathVariable Long id){
-        try {
-            claimRequestService.deleteClaimRequest(id);
-            return ResponseEntity.ok().body(String.format("Delete Claim Request Successfully!"));
-        } catch (Exception e){
-            return ResponseEntity.internalServerError().body(String.format("Delete Claim Request Failed!"));
-        }
+        return claimRequestService.deleteClaimRequest(id);
     }
 }
