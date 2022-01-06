@@ -4,7 +4,6 @@ import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import com.alpaca.Alpaca_Mock_Project.mapper.CustomerMapper;
 import com.alpaca.Alpaca_Mock_Project.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,7 +24,7 @@ public class CustomerService {
 
     @Transactional
     public CustomerDto getCustomerById(final Long id){
-        return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.findById(id).orElse(null));
+        return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.findById(id).orElseThrow(NullPointerException::new));
     }
 
     @Transactional
