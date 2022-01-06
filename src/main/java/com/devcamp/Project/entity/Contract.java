@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
@@ -16,6 +17,8 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE contract SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Contract {
 
     @Id
@@ -42,9 +45,10 @@ public class Contract {
     @NotNull(message = "please input acceptable accidents!")
     private String acceptableAccidents;
 
+    private boolean deleted = Boolean.FALSE;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn( name = "customer_id")
-    @NotNull( message = "Please input Id of customer!")
     private Customer customer;
 }

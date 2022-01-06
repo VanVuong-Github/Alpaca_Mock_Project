@@ -5,6 +5,7 @@ import com.devcamp.Project.entity.ClaimRequest;
 import com.devcamp.Project.mapped.ClaimRequestMapped;
 import com.devcamp.Project.repository.ClaimRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,33 +29,40 @@ public class ClaimRequestService {
     // lấy tất cả thông tin claimRequest
     @Transactional
     public List<ClaimRequestDTO> getAll(){
-
         return claimRequestRepository.findAll().stream()
                 .map(claimRequestMapped::claimRequestToClaimRequestDTO).collect(Collectors.toList());
     }
 
     // lấy tất cả thông tin claimRequest theo id
     @Transactional
-    public ClaimRequestDTO getById(Long id){
-
-        //return claimRequestRepository.findById(id).orElse(null);
-        return ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.findById(id).orElse(null));
+    public ResponseEntity<?> getById(Long id){
+        Optional<ClaimRequest> oldClaimRequest = claimRequestRepository.findById(id);
+        if (oldClaimRequest.isPresent()){
+            return new ResponseEntity<>(ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.findById(id).orElse(null)), HttpStatus.OK);
+        } else {
+            return ResponseEntity.badRequest().body("Claim Request do not exist!!");
+        }
     }
 
     // tạo mới claimRequest
     @Transactional
     public ClaimRequestDTO createClaimRequest(ClaimRequest cClaimRequest) {
-        //return claimRequestRepository.saveAndFlush(cClaimRequest);
         return ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.saveAndFlush(cClaimRequest));
     }
 
     // cập nhật thông tin claimRequest
     @Transactional
-    public ClaimRequestDTO updateClaimRequest(ClaimRequest inputClaimRequest, Long id)  {
-        ClaimRequest claimRequest = claimRequestRepository.findById(id).orElse(null); //this is the request before change
-        claimRequest.setCustomerName(inputClaimRequest.getCustomerName());
-        claimRequest.setCustomerCardId(inputClaimRequest.getCustomerCardId());
-        return  ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.saveAndFlush(claimRequest));
+    public ResponseEntity<?> updateClaimRequest(ClaimRequest inputClaimRequest, Long id)  {
+        Optional<ClaimRequest> oldClaimRequest = claimRequestRepository.findById(id);
+        if (oldClaimRequest.isPresent()){
+            ClaimRequest claimRequest = claimRequestRepository.findById(id).orElse(null); //this is the request before change
+            claimRequest.setCustomerName(inputClaimRequest.getCustomerName());
+            claimRequest.setCustomerCardId(inputClaimRequest.getCustomerCardId());
+            return new ResponseEntity<>(ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.saveAndFlush(claimRequest)), HttpStatus.OK);
+        } else {
+            return ResponseEntity.badRequest().body("Claim Request do not exist!!");
+        }
+
     }
 
     // xóa thông tin claimRequest và file kèm theo
@@ -63,9 +71,9 @@ public class ClaimRequestService {
         Optional<ClaimRequest> claimRequest = claimRequestRepository.findById(id);
         if ( claimRequest.isPresent()){
             claimRequestRepository.deleteById(id);
-            return ResponseEntity.ok("Deleted Claim Request Success");
+            return ResponseEntity.ok("Deleted Claim Request Success!");
         } else {
-            return ResponseEntity.ok("Deleted Claim Request Fail!");
+            return ResponseEntity.badRequest().body("Claim Request do not exist!!");
         }
     }
 }

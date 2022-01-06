@@ -24,20 +24,20 @@ public class ClaimController {
     ClaimRequestService claimRequestService;
 
     // lấy tất cả thông tin của claimRequest thông qa service
-    @GetMapping("/")
+    @GetMapping("")
     public List<ClaimRequestDTO> getAll(){
         return claimRequestService.getAll();
     }
 
     // lấy tất cả thông tin của claimRequest theo id thông qa service
     @GetMapping("/{id}")
-    public ClaimRequestDTO getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable Long id){
         return claimRequestService.getById(id);
 
     }
 
     // tạo mơi claimRequest thông qa service
-    @PostMapping("/")
+    @PostMapping("")
     // requestBody
     public ClaimRequestDTO createClaimRequest(@Valid @RequestParam ClaimRequest claimRequest){
         return claimRequestService.createClaimRequest(claimRequest);
@@ -45,7 +45,7 @@ public class ClaimController {
 
     // cập nhật claimRequest thông qa service
     @PutMapping("/{id}")
-    public ClaimRequestDTO updateClaimRequest(@RequestParam ClaimRequest claimRequest,
+    public ResponseEntity<?> updateClaimRequest(@RequestParam ClaimRequest claimRequest,
                                                 @PathVariable Long id) {
         return claimRequestService.updateClaimRequest(claimRequest, id);
     }

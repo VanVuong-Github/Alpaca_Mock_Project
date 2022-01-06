@@ -4,10 +4,10 @@ import com.devcamp.Project.dto.ContractDTO;
 import com.devcamp.Project.entity.Contract;
 import com.devcamp.Project.entity.Customer;
 import com.devcamp.Project.mapped.ContractMapped;
-import com.devcamp.Project.mapped.CustomerMapped;
 import com.devcamp.Project.repository.ContractRepository;
 import com.devcamp.Project.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -37,54 +37,64 @@ public class ContractService {
 
     // lấy thông tin hợp đồng theo id
     @Transactional
-    public ContractDTO getContractById(final Long id){
+    public ResponseEntity<?> getContractById(final Long id){
+        Optional<Contract> contract = contractRepository.findById(id);
+        if(contract.isPresent()){
+            return new ResponseEntity<>(ContractMapped.INSTANCE.contractToContractDTO(contractRepository.findById(id).orElse(null)), HttpStatus.OK);
+        } else {
+            return ResponseEntity.badRequest().body("Contract do not exist!!");
+        }
 
-        //return contractRepository.findById(id).orElse(null);
-        return ContractMapped.INSTANCE.contractToContractDTO(contractRepository.findById(id).get());
     }
 
     // lấy thông tin hợp đồng theo id của khách hàng
     @Transactional
-    public List<Contract> getContractByCustomerId(final Long customerId){
-        return contractRepository.findByCustomerId(customerId);
+    public ResponseEntity<?> getContractByCustomerId(final Long customerId){
+        Optional<Customer> oldCustomer = customerRepository.findById(customerId);
+        if (oldCustomer.isPresent()){
+            return new ResponseEntity<>(contractRepository.findByCustomerId(customerId), HttpStatus.OK);
+        }
+        return ResponseEntity.badRequest().body("Customer do not exist!!");
     }
 
     // tạo mới hợp đồng
     @Transactional
-    public ContractDTO createContract(Long customerId, Contract inputContract){
+    public ResponseEntity<?> createContract(Long customerId, Contract inputContract) {
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isPresent()){
-            inputContract.setCustomer(customer.get());
-            return ContractMapped.INSTANCE.contractToContractDTO(contractRepository.save(inputContract));
+            return new ResponseEntity<>(ContractMapped.INSTANCE.contractToContractDTO(contractRepository.save(inputContract)), HttpStatus.CREATED);
         } else {
-            return null;
+            return ResponseEntity.badRequest().body("Customer do not exist!!");
         }
     }
 
     // cập nhật hợp đồng
     @Transactional
-    public ContractDTO updateContract(Long id, Contract inputContract){
-        Contract contract = contractRepository.findById(id).orElse(null);
-        contract.setValidFrom(inputContract.getValidFrom());
-        contract.setValidTo((inputContract.getValidTo()));
-        contract.setMaximumAmount(inputContract.getMaximumAmount());
-        contract.setRemainingAmount(inputContract.getRemainingAmount());
-        contract.setAcceptableAccidents(inputContract.getAcceptableAccidents());
-        contract.setAcceptableHospitals(inputContract.getAcceptableHospitals());
-
-        return ContractMapped.INSTANCE.contractToContractDTO(contractRepository.save(contract));
-
+    public ResponseEntity<?> updateContract(Long id, Contract inputContract){
+        Optional<Contract> oldContract = contractRepository.findById(id);
+        if (oldContract.isPresent()){
+            Contract newContract = oldContract.orElse(null);
+            newContract.setValidFrom(inputContract.getValidFrom());
+            newContract.setValidTo((inputContract.getValidTo()));
+            newContract.setMaximumAmount(inputContract.getMaximumAmount());
+            newContract.setRemainingAmount(inputContract.getRemainingAmount());
+            newContract.setAcceptableAccidents(inputContract.getAcceptableAccidents());
+            newContract.setAcceptableHospitals(inputContract.getAcceptableHospitals());
+            return new ResponseEntity<>(ContractMapped.INSTANCE.contractToContractDTO(contractRepository.save(newContract)), HttpStatus.OK) ;
+        } else {
+            return ResponseEntity.badRequest().body("Customer do not exist!!");
+        }
     }
 
     // xóa hợp đồng
     @Transactional
-    public ResponseEntity<?> deleteContractById(final Long id){
+    public ResponseEntity<?> deleteContractById(Long id) {
         Optional<Contract> contract = contractRepository.findById(id);
         if(contract.isPresent()){
             contractRepository.deleteById(id);
             return ResponseEntity.ok("Deleted Contract Success!!");
         } else {
-            return ResponseEntity.ok("Deleted Contract Fail!!");
+            return ResponseEntity.badRequest().body("Customer do not exist!!");
         }
     }
 }

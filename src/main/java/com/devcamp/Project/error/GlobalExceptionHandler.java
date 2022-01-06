@@ -1,6 +1,5 @@
 package com.devcamp.Project.error;
 
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +22,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * Tất cả các Exception không được khai báo sẽ được xử lý tại đây
      */
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessage handleAllException(Exception ex) {
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleAllException(Exception ex)    {
         // quá trình kiểm soat lỗi diễn ra ở đây
-        return new ErrorMessage(10000, ex.getLocalizedMessage());
+        return new ErrorMessage(10000, ex.getCause().getCause().getLocalizedMessage());
     }
 
     /**

@@ -22,34 +22,32 @@ public class CustomerController {
     CustomerService cCustomerService;
 
     // lấy tất cả thông tin khách hàng thông service
-    @GetMapping("/")
+    @GetMapping("")
     public List<CustomerDTO> getAll(){
         return cCustomerService.getAllCustomer();
-        //return customerRepository.findAll();
     }
 
     // lấy tất cả thông tin khách hàng bằng id thông service
     @GetMapping("/{id}")
-    public CustomerDTO getCustomerById(@PathVariable Long id){
+    public ResponseEntity<?> getCustomerById(@PathVariable Long id){
         return cCustomerService.getCustomerById(id);
-
     }
 
     // tạo mới khách hàng
-    @PostMapping("/")
+    @PostMapping("")
     public CustomerDTO createCustomer(@Valid @RequestBody Customer customer){
         return cCustomerService.createCustomer(customer);
     }
 
     // cập nhật khách hàng
     @PutMapping("/{id}")
-    public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody Customer inputCustomer){
+    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody Customer inputCustomer){
         return cCustomerService.updateCustomer(inputCustomer, id);
     }
 
     // xóa khách hàng
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCustomer(@PathVariable Long id){
+    public ResponseEntity<?> deleteCustomer(@PathVariable Long id){
        return cCustomerService.deleteCustomerById(id);
     }
 }

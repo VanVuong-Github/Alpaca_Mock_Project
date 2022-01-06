@@ -19,38 +19,38 @@ public class ContractController {
     ContractService contractService;
 
     // lấy thông tin hợp đồng thông qa service
-    @GetMapping("/")
+    @GetMapping("")
     public List<ContractDTO> getAllContract() {
         return contractService.getAllContract();
     }
 
     // lấy thông tin hợp đồng bằng id thông qa service
     @GetMapping("/{id}")
-    public ContractDTO getContractById(@PathVariable Long id) {
+    public ResponseEntity<?> getContractById(@PathVariable Long id) {
         return contractService.getContractById(id);
     }
 
     // lấy thông tin hợp đồng bằng id của khách hàng thông qa service
     @GetMapping("/customer/{id}")
-    public List<Contract> getContractByCustomerId(@PathVariable Long id) {
+    public ResponseEntity<?> getContractByCustomerId(@PathVariable Long id) {
         return contractService.getContractByCustomerId(id);
     }
 
     // tạo mới hợp đồng
     @PostMapping("/customer/{id}")
-    public Object createContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) {
+    public ResponseEntity<?> createContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) throws Exception {
         return contractService.createContract(id, inputContract);
     }
 
     // cập nhật hợp đồng
     @PutMapping("/{id}")
-    public Object updateContract(@PathVariable Long id, @RequestBody Contract inputContract) {
+    public ResponseEntity<?> updateContract(@PathVariable Long id, @RequestBody Contract inputContract) {
         return contractService.updateContract(id, inputContract);
 
     }
 
     // xóa hợp đồng
-    @DeleteMapping("/")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteContract(@PathVariable Long id) {
         return contractService.deleteContractById(id);
     }

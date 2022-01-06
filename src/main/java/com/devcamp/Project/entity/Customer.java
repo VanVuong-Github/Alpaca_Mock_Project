@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,6 +19,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE customers SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Customer {
 
 	@Id
@@ -48,6 +52,9 @@ public class Customer {
     private String address;
     @NotNull( message = "Please enter your occupation!")
     private String occupation;
+
+
+    private boolean deleted = Boolean.FALSE;
 
     @OneToMany( targetEntity = Contract.class,
                 cascade = CascadeType.ALL,

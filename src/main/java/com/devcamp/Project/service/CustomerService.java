@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,55 +32,61 @@ public class CustomerService {
 	// lấy tất cả thông tin khách hàng theo Dto
 	@Transactional
 	public List<CustomerDTO> getAllCustomer() {
-		//return iCustomerRepository.findAll();
 		return customerRepository.findAll().stream()
 				.map(customerMapped::customerToCustomerDTO).collect(Collectors.toList());
 	}
 
 	// lấy tất cả thông tin khách hàng bằng id theo Dto
 	@Transactional
-	public CustomerDTO getCustomerById(final Long id) {
-		//return iCustomerRepository.findById(id).orElse(null);
-		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.findById(id).get());
+	public ResponseEntity<?> getCustomerById(final Long id) {
+		Optional<Customer> oldCustomer = customerRepository.findById(id);
+		if (oldCustomer.isPresent()){
+			return new ResponseEntity<>(CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.findById(id).orElse(null)), HttpStatus.OK);
+		} else {
+			return ResponseEntity.badRequest().body("Customer do not exist!");
+		}
+
 	}
 
 	// tao thông tin khách hàng
 	@Transactional
 	public CustomerDTO createCustomer(Customer inputCustomer) {
-		//return iCustomerRepository.save(inputCustomer);
 		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.save(inputCustomer));
 	}
 
 	// cập nhật thông tin khách hàng
 	@Transactional
-	public CustomerDTO updateCustomer(Customer inputCustomer, Long customerId) {
-		Optional<Customer> customer1 = customerRepository.findById(customerId);
+	public ResponseEntity<?> updateCustomer(Customer inputCustomer, Long customerId) {
+		Optional<Customer> oldCustomer = customerRepository.findById(customerId);
 		// validate Optional
 		// sonarlint.
-		Customer customer = customer1.get();
-		customer.setName(inputCustomer.getName());
-		customer.setGender(inputCustomer.getGender());
-		customer.setCardId(inputCustomer.getCardId());
-		customer.setPhone(inputCustomer.getPhone());
-		customer.setEmail(inputCustomer.getEmail());
-		customer.setDateOfBirth(inputCustomer.getDateOfBirth());
-		customer.setAddress(inputCustomer.getAddress());
-		customer.setOccupation(inputCustomer.getOccupation());
+		if (oldCustomer.isPresent()){
+			Customer customer = oldCustomer.orElse(null);
+			customer.setName(inputCustomer.getName());
+			customer.setGender(inputCustomer.getGender());
+			customer.setCardId(inputCustomer.getCardId());
+			customer.setPhone(inputCustomer.getPhone());
+			customer.setEmail(inputCustomer.getEmail());
+			customer.setDateOfBirth(inputCustomer.getDateOfBirth());
+			customer.setAddress(inputCustomer.getAddress());
+			customer.setOccupation(inputCustomer.getOccupation());
+			return new ResponseEntity<>(CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.save(customer)), HttpStatus.OK);
+		} else {
+			return ResponseEntity.badRequest().body("Customer do not exist!");
+		}
 
-		//return iCustomerRepository.save(customer);
-		return CustomerMapped.INSTANCE.customerToCustomerDTO(customerRepository.save(customer));
 	}
 
 	// xóa thông tin khách hàng
 	@Transactional
-	public ResponseEntity<Object> deleteCustomerById(final Long id){
+	public ResponseEntity<?> deleteCustomerById(final Long id){
 		// hard delete
 		// soft delete
 			Optional<Customer> customer = customerRepository.findById(id);
 			if(customer.isPresent()){
-				if (customer.get().getContract().equals(null)){
+				if (customer.get().getContract().isEmpty()){
 					customerRepository.deleteById(id);
-					return ResponseEntity.accepted().body("Customer don't have contract! Can delete.");
+					return ResponseEntity.accepted().body("Customer don't have contract! Deleted Customer Success.");
 				} else {
 					return ResponseEntity.badRequest().body("Customer have contract! Can't delete.");
 				}

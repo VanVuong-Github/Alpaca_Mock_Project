@@ -36,20 +36,23 @@ public class AuthController {
     @Autowired
     RedisService redisService;
 
+    // đăng kí user
     @PostMapping("/register")
     public User register(@RequestBody User user){
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         return userService.createUser(user);
     }
 
+    // lưu vào redis
     @GetMapping("/redis")
-    public Object a(){
+    public Object redis(){
 
         RedissonClient redissonClient = Redisson.create(redisService.config());
         redissonClient.getBucket("test1").set("khanh1");
         return redissonClient.getBucket("test1").get();
     }
 
+    // đăng nhập
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user){
         UserPrincipal userPrincipal = userService.findByUsername(user.getUsername());
@@ -64,6 +67,7 @@ public class AuthController {
         return ResponseEntity.ok(token.getToken());
     }
 
+    // phân quyền
     @GetMapping("/hello")
     @PreAuthorize("hasAnyAuthority('USER_READ')")
     public ResponseEntity hello(){
