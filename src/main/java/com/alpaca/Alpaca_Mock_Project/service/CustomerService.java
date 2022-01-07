@@ -29,7 +29,6 @@ public class CustomerService {
 
     @Transactional
     public List<CustomerDto> findAll(){
-        // map List<Customer> to List<CustomerDto> to remove customer id from response customer list
         return customerRepository.findAll().stream()
                 .map(customerMapper::customerToCustomerDto).collect(Collectors.toList());
     }
