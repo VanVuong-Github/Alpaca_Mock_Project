@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RedisService {
+
     public Config config(){
         Config config = new Config();
         config.useSingleServer()

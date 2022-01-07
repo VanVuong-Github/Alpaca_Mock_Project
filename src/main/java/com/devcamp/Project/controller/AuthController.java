@@ -1,7 +1,12 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.dto.CustomerDTO;
+import com.devcamp.Project.entity.Customer;
+import com.devcamp.Project.redis.User1;
 import com.devcamp.Project.service.RedisService;
 import org.redisson.Redisson;
+import org.redisson.api.RBucket;
+import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,8 @@ import com.devcamp.Project.entity.User;
 import com.devcamp.Project.security.JwtUtil;
 import com.devcamp.Project.service.TokenService;
 import com.devcamp.Project.service.UserService;
+
+import java.util.Date;
 
 
 @RestController
@@ -48,8 +55,15 @@ public class AuthController {
     public Object redis(){
 
         RedissonClient redissonClient = Redisson.create(redisService.config());
-        redissonClient.getBucket("test1").set("khanh1");
-        return redissonClient.getBucket("test1").get();
+
+        RMap map = redissonClient.getMap ("myMap");
+        //map.put(1, new CustomerDTO("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
+        map.put ("a", new Customer("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
+        map.put ("b", new Customer("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
+        map.put ("c", new Customer("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
+
+        //redissonClient.getBucket("CUSTOMER").set(new Customer(2L,"Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
+        return map.get("a");           //redissonClient.getBucket("CUSTOMER").get();
     }
 
     // đăng nhập

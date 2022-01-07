@@ -10,6 +10,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE customers SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
-public class Customer {
+//@Where(clause = "deleted=false")
+public class Customer implements Serializable {
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.IDENTITY)
@@ -45,6 +46,7 @@ public class Customer {
     @Column(unique = true)
     @NotNull( message = "Please enter your email!")
     private String email;
+
     @Column( name = "date_of_bird")
     @NotNull( message = "Please enter your date of birth!")
     private Date dateOfBirth;
@@ -60,7 +62,16 @@ public class Customer {
                 cascade = CascadeType.ALL,
                 mappedBy = "customer")
     private List<Contract> contract;
-	
-	
-	
+
+    public Customer(String name, String gender, String cardId, String phone, String email, Date dateOfBirth, String address, String occupation) {
+        this.name = name;
+        this.gender = gender;
+        this.cardId = cardId;
+        this.phone = phone;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.occupation = occupation;
+
+    }
 }

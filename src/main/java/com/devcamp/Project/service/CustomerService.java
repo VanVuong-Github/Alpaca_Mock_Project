@@ -85,6 +85,8 @@ public class CustomerService {
 			Optional<Customer> customer = customerRepository.findById(id);
 			if(customer.isPresent()){
 				if (customer.get().getContract().isEmpty()){
+					//customer.get().setDeleted(true);
+					//customerRepository.save(customer.get());
 					customerRepository.deleteById(id);
 					return ResponseEntity.accepted().body("Customer don't have contract! Deleted Customer Success.");
 				} else {
