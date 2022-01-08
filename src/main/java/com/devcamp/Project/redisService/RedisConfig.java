@@ -1,10 +1,10 @@
-package com.devcamp.Project.service;
+package com.devcamp.Project.redisService;
 
 import org.redisson.config.Config;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RedisService {
+public class RedisConfig {
 
     public Config config(){
         Config config = new Config();

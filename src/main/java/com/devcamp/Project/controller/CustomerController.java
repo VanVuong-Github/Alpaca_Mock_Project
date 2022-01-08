@@ -2,6 +2,7 @@ package com.devcamp.Project.controller;
 
 import com.devcamp.Project.dto.CustomerDTO;
 import com.devcamp.Project.entity.Customer;
+import com.devcamp.Project.redisService.CustomerRedisService;
 import com.devcamp.Project.repository.CustomerRepository;
 import com.devcamp.Project.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class CustomerController {
     CustomerRepository customerRepository;
     @Autowired
     CustomerService cCustomerService;
+    @Autowired
+    CustomerRedisService customerRedisService;
 
     // lấy tất cả thông tin khách hàng thông service
     @GetMapping("")
@@ -50,4 +53,6 @@ public class CustomerController {
     public ResponseEntity<?> deleteCustomer(@PathVariable Long id){
        return cCustomerService.deleteCustomerById(id);
     }
+
 }
+

@@ -1,14 +1,10 @@
 package com.devcamp.Project.controller;
 
-import com.devcamp.Project.dto.CustomerDTO;
 import com.devcamp.Project.entity.Customer;
-import com.devcamp.Project.redis.User1;
-import com.devcamp.Project.service.RedisService;
+import com.devcamp.Project.redisService.RedisConfig;
 import org.redisson.Redisson;
-import org.redisson.api.RBucket;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,30 +36,11 @@ public class AuthController {
     @Autowired
     TokenService tokenService;
 
-    @Autowired
-    RedisService redisService;
-
     // đăng kí user
     @PostMapping("/register")
     public User register(@RequestBody User user){
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         return userService.createUser(user);
-    }
-
-    // lưu vào redis
-    @GetMapping("/redis")
-    public Object redis(){
-
-        RedissonClient redissonClient = Redisson.create(redisService.config());
-
-        RMap map = redissonClient.getMap ("myMap");
-        //map.put(1, new CustomerDTO("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
-        map.put ("a", new Customer("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
-        map.put ("b", new Customer("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
-        map.put ("c", new Customer("Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
-
-        //redissonClient.getBucket("CUSTOMER").set(new Customer(2L,"Lam", "male","cardId", "phone", "email", new Date(1994-12-21), "HCM", "DEV"));
-        return map.get("a");           //redissonClient.getBucket("CUSTOMER").get();
     }
 
     // đăng nhập

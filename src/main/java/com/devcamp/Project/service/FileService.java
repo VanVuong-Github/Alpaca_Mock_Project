@@ -3,6 +3,8 @@ package com.devcamp.Project.service;
 import com.devcamp.Project.exception.FileStorageException;
 import com.devcamp.Project.exception.MyFileNotFoundException;
 import com.devcamp.Project.entity.FileProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -20,7 +22,7 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class FileService {
-
+    private static Logger logger = LoggerFactory.getLogger(FileService.class);
     private final Path fileStorageLocation;
 
     @Autowired

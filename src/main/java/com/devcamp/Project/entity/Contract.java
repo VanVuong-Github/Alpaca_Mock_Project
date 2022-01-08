@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
@@ -18,8 +19,8 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE contract SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
-public class Contract {
+//@Where(clause = "deleted=false")
+public class Contract implements Serializable {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)

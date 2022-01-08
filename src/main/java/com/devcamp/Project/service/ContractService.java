@@ -6,6 +6,8 @@ import com.devcamp.Project.entity.Customer;
 import com.devcamp.Project.mapped.ContractMapped;
 import com.devcamp.Project.repository.ContractRepository;
 import com.devcamp.Project.repository.CustomerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ContractService {
+    private static Logger logger = LoggerFactory.getLogger(ContractService.class);
+
     @Autowired
     private ContractRepository contractRepository;
 
@@ -30,7 +34,7 @@ public class ContractService {
     // lấy tất cả thông tin hợp đồng
     @Transactional
     public List<ContractDTO> getAllContract(){
-
+        logger.info(String.format("List Contract Had Found!!"));
         return contractRepository.findAll().stream()
                 .map(contractMapped::contractToContractDTO).collect(Collectors.toList());
     }
@@ -40,8 +44,10 @@ public class ContractService {
     public ResponseEntity<?> getContractById(final Long id){
         Optional<Contract> contract = contractRepository.findById(id);
         if(contract.isPresent()){
+            logger.info(String.format("Contract with ID %s had found!",id));
             return new ResponseEntity<>(ContractMapped.INSTANCE.contractToContractDTO(contractRepository.findById(id).orElse(null)), HttpStatus.OK);
         } else {
+            logger.info(String.format("Contract do not exist!"));
             return ResponseEntity.badRequest().body("Contract do not exist!!");
         }
 
@@ -62,8 +68,10 @@ public class ContractService {
     public ResponseEntity<?> createContract(Long customerId, Contract inputContract) {
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isPresent()){
+            logger.info(String.format("Contract had saved!!"));
             return new ResponseEntity<>(ContractMapped.INSTANCE.contractToContractDTO(contractRepository.save(inputContract)), HttpStatus.CREATED);
         } else {
+            logger.info(String.format("Customer do not exist!"));
             return ResponseEntity.badRequest().body("Customer do not exist!!");
         }
     }
@@ -80,9 +88,11 @@ public class ContractService {
             newContract.setRemainingAmount(inputContract.getRemainingAmount());
             newContract.setAcceptableAccidents(inputContract.getAcceptableAccidents());
             newContract.setAcceptableHospitals(inputContract.getAcceptableHospitals());
+            logger.info(String.format("Contract with ID %s updated", id));
             return new ResponseEntity<>(ContractMapped.INSTANCE.contractToContractDTO(contractRepository.save(newContract)), HttpStatus.OK) ;
         } else {
-            return ResponseEntity.badRequest().body("Customer do not exist!!");
+            logger.info(String.format("Contract do not exist!"));
+            return ResponseEntity.badRequest().body("Contract do not exist!!");
         }
     }
 
@@ -92,9 +102,11 @@ public class ContractService {
         Optional<Contract> contract = contractRepository.findById(id);
         if(contract.isPresent()){
             contractRepository.deleteById(id);
+            logger.info(String.format("Contract with ID %s deleted", id));
             return ResponseEntity.ok("Deleted Contract Success!!");
         } else {
-            return ResponseEntity.badRequest().body("Customer do not exist!!");
+            logger.info(String.format("Contract do not exist!"));
+            return ResponseEntity.badRequest().body("Contract do not exist!!");
         }
     }
 }
