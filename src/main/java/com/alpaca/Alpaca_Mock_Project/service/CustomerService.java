@@ -2,59 +2,18 @@ package com.alpaca.Alpaca_Mock_Project.service;
 
 import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
-import com.alpaca.Alpaca_Mock_Project.mapper.CustomerMapper;
-import com.alpaca.Alpaca_Mock_Project.repository.CustomerRepository;
-import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-public class CustomerService {
+public interface CustomerService {
 
-    private final CustomerRepository customerRepository;
+    Customer getCustomerById(final Long id);
 
-    private final CustomerMapper customerMapper;
+    List<Customer> findAll();
 
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper) {
-        this.customerRepository = customerRepository;
-        this.customerMapper = customerMapper;
-    }
+    Customer saveCustomer(final CustomerDto customer);
 
-    @Transactional
-    public CustomerDto getCustomerById(final Long id){
-        return CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.findById(id).orElseThrow(NullPointerException::new));
-    }
+    Customer updateCustomer(final CustomerDto customer, final Long id);
 
-    @Transactional
-    public List<CustomerDto> findAll(){
-        return customerRepository.findAll().stream()
-                .map(customerMapper::customerToCustomerDto).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void saveCustomer(final CustomerDto customer){
-        customerRepository.save(CustomerMapper.INSTANCE.customerDtoToCustomer(customer));
-    }
-
-    @Transactional
-    public void updateCustomer(final CustomerDto customer, final Long id){
-        Customer oldCustomer = customerRepository.findById(id).orElseThrow(NullPointerException::new); // this is the customer before update
-        oldCustomer.setName(customer.getName());
-        oldCustomer.setGender(customer.getGender());
-        oldCustomer.setCardId(customer.getCardId());
-        oldCustomer.setPhone(customer.getPhone());
-        oldCustomer.setEmail(customer.getEmail());
-        oldCustomer.setDateOfBirth(customer.getDateOfBirth());
-        oldCustomer.setAddress(customer.getAddress());
-        oldCustomer.setOccupation(customer.getOccupation());
-        CustomerMapper.INSTANCE.customerToCustomerDto(customerRepository.save(oldCustomer));
-    }
-
-    @Transactional
-    public void deleteCustomerById(final Long id){
-        Customer oldCustomer = customerRepository.findById(id).orElseThrow(NullPointerException::new);
-        customerRepository.delete(oldCustomer);
-    }
+    void deleteCustomerById(final Long id);
 }

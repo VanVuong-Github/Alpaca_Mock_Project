@@ -16,7 +16,6 @@ import java.sql.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomerDto implements Serializable {
     @Id
-    @JsonIgnore
     private Long id;
     private String name;
     private String gender;

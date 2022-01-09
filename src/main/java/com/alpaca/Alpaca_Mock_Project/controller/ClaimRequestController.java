@@ -1,23 +1,20 @@
 package com.alpaca.Alpaca_Mock_Project.controller;
 
 import com.alpaca.Alpaca_Mock_Project.dto.ClaimRequestDto;
-import com.alpaca.Alpaca_Mock_Project.service.ClaimRequestService;
+import com.alpaca.Alpaca_Mock_Project.service.impl.ClaimRequestServiceImpl;
 import com.sun.istack.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/claim-request")
 public class ClaimRequestController {
 
-    private final ClaimRequestService claimRequestService;
+    private final ClaimRequestServiceImpl claimRequestService;
 
-    public ClaimRequestController(ClaimRequestService claimRequestService) {
+    public ClaimRequestController(ClaimRequestServiceImpl claimRequestService) {
         this.claimRequestService = claimRequestService;
     }
 

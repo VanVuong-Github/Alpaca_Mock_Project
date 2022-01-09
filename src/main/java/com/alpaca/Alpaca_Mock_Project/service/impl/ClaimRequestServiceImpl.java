@@ -1,4 +1,4 @@
-package com.alpaca.Alpaca_Mock_Project.service;
+package com.alpaca.Alpaca_Mock_Project.service.impl;
 
 import com.alpaca.Alpaca_Mock_Project.dto.ClaimRequestDto;
 import com.alpaca.Alpaca_Mock_Project.entity.ClaimRequest;
@@ -13,15 +13,15 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
-public class ClaimRequestService {
+public class ClaimRequestServiceImpl {
 
-    private static final Logger logger = Logger.getLogger(ClaimRequestService.class.getName());
+    private static final Logger logger = Logger.getLogger(ClaimRequestServiceImpl.class.getName());
 
     private final ClaimRequestRepository claimRequestRepository;
 
     private final ClaimRequestMapper claimRequestMapper;
 
-    public ClaimRequestService(ClaimRequestRepository claimRequestRepository, ClaimRequestMapper claimRequestMapper) {
+    public ClaimRequestServiceImpl(ClaimRequestRepository claimRequestRepository, ClaimRequestMapper claimRequestMapper) {
         this.claimRequestRepository = claimRequestRepository;
         this.claimRequestMapper = claimRequestMapper;
     }

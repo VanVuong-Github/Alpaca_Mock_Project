@@ -17,7 +17,6 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClaimRequestDto implements Serializable {
     @Id
-    @JsonIgnore
     private Long id;
     private String customerName;
     private String cardId;
