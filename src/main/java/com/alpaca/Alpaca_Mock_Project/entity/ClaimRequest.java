@@ -1,15 +1,15 @@
 package com.alpaca.Alpaca_Mock_Project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 @Data
@@ -23,6 +23,8 @@ import java.io.Serializable;
                 typeClass = StringArrayType.class
         )
 })
+@SQLDelete(sql = "UPDATE claim_request SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class ClaimRequest implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +36,7 @@ public class ClaimRequest implements Serializable {
     @Type(type = "string-array")
     @Column(columnDefinition = "text[]")
     private String[] urls;
+
+    @JsonIgnore
+    private boolean deleted = Boolean.FALSE;
 }

@@ -1,7 +1,10 @@
 package com.alpaca.Alpaca_Mock_Project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -19,6 +22,8 @@ import java.sql.Date;
 @AllArgsConstructor
 @Entity
 @Document(indexName = "customer", createIndex = true)
+@SQLDelete(sql = "UPDATE customer SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +42,7 @@ public class Customer implements Serializable {
     private Date dateOfBirth;
     private String address;
     private String occupation;
+
+    @JsonIgnore
+    private boolean deleted = Boolean.FALSE;
 }
