@@ -13,6 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Date;
 
@@ -29,18 +32,31 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name is required")
     @Field(type = FieldType.Text)
     private String name;
+
+    @NotBlank(message = "Gender is required")
     private String gender;
 
+    @NotBlank(message = "No. card id is required")
     @Field(type = FieldType.Text)
     private String cardId;
+
+    @NotBlank(message = "Phone is required")
     private String phone;
+
+    @Email(message = "Email is required")
     private String email;
 
+    @NotNull(message = "Date of birth is required")
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date dateOfBirth;
+
+    @NotBlank(message = "Address is required")
     private String address;
+
+    @NotBlank(message = "Occupation is required")
     private String occupation;
 
     @JsonIgnore

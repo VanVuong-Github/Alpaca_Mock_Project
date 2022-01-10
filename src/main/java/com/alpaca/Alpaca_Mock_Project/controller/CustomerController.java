@@ -8,6 +8,8 @@ import com.alpaca.Alpaca_Mock_Project.service.impl.CustomerServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomerById(@PathVariable("id") final Long id){
+    public ResponseEntity<?> getCustomerById(@PathVariable("id") @Min(1) final Long id){
         Object customerCache = customerCacheService.getCacheById(id);
         // check cache
         if (customerCache != null)
@@ -46,7 +48,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCustomer(@RequestBody final CustomerDto customerDto){
+    public ResponseEntity<?> createCustomer(@RequestBody @Valid final CustomerDto customerDto){
         Customer customer = customerService.saveCustomer(customerDto);
         // put cache
         customerCacheService.putCache(customer);
@@ -54,8 +56,8 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@RequestBody final CustomerDto customerDto,
-                                   @PathVariable("id") final Long id){
+    public ResponseEntity<?> updateCustomer(@RequestBody @Valid final CustomerDto customerDto,
+                                   @PathVariable("id") @Min(1) final Long id){
         Customer customer = customerService.updateCustomer(customerDto, id);
         // put cache
         customerCacheService.putCache(customer);
@@ -63,7 +65,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable("id") final Long id){
+    public ResponseEntity<?> deleteCustomer(@PathVariable("id") @Min(1) final Long id){
         customerService.deleteCustomerById(id);
         // remove cache
         customerCacheService.deleteCache(id);

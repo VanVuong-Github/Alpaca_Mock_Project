@@ -10,6 +10,8 @@ import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Data
@@ -30,11 +32,15 @@ public class ClaimRequest implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Customer name is required")
     private String customerName;
+
+    @NotBlank(message = "Customer name is required")
     private String cardId;
 
     @Type(type = "string-array")
     @Column(columnDefinition = "text[]")
+    @NotEmpty(message = "At lease one image url is required")
     private String[] urls;
 
     @JsonIgnore
