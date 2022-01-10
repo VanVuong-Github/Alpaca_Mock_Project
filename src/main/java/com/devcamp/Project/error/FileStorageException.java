@@ -1,4 +1,4 @@
-package com.devcamp.Project.exception;
+package com.devcamp.Project.error;
 
 public class FileStorageException extends RuntimeException{
     public FileStorageException(String message) {

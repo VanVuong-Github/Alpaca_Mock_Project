@@ -38,13 +38,13 @@ public class ContractController {
 
     // tạo mới hợp đồng
     @PostMapping("/customer/{id}")
-    public ResponseEntity<?> createContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) throws Exception {
+    public ResponseEntity<?> createContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) {
         return contractService.createContract(id, inputContract);
     }
 
     // cập nhật hợp đồng
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateContract(@PathVariable Long id, @RequestBody Contract inputContract) {
+    public ResponseEntity<?> updateContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) {
         return contractService.updateContract(id, inputContract);
 
     }

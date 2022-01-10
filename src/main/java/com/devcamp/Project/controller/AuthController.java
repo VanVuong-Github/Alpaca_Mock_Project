@@ -1,11 +1,7 @@
 package com.devcamp.Project.controller;
 
-import com.devcamp.Project.entity.Customer;
-import com.devcamp.Project.redisService.RedisConfig;
-import org.redisson.Redisson;
-import org.redisson.api.RMap;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,8 +16,6 @@ import com.devcamp.Project.entity.User;
 import com.devcamp.Project.security.JwtUtil;
 import com.devcamp.Project.service.TokenService;
 import com.devcamp.Project.service.UserService;
-
-import java.util.Date;
 
 
 @RestController
@@ -60,7 +54,7 @@ public class AuthController {
 
     // phân quyền
     @GetMapping("/hello")
-    @PreAuthorize("hasAnyAuthority('USER_READ')")
+    @PreAuthorize("hasAnyAuthority('USER_DELETE')")
     public ResponseEntity hello(){
         return ResponseEntity.ok("hello");
     }

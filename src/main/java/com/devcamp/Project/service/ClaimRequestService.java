@@ -55,6 +55,7 @@ public class ClaimRequestService {
     @Transactional
     public ClaimRequestDTO createClaimRequest(ClaimRequest cClaimRequest) {
         logger.info(String.format("Claim Request had saved!!"));
+
         return ClaimRequestMapped.INSTANCE.claimRequestToClaimRequestDTO(claimRequestRepository.saveAndFlush(cClaimRequest));
     }
 

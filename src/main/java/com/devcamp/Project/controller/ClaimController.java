@@ -37,15 +37,15 @@ public class ClaimController {
     }
 
     // tạo mơi claimRequest thông qa service
-    @PostMapping("")
+    @PostMapping("/")
     // requestBody
-    public ClaimRequestDTO createClaimRequest(@Valid @RequestParam ClaimRequest claimRequest){
+    public ClaimRequestDTO createClaimRequest(@Valid @RequestBody ClaimRequest claimRequest){
         return claimRequestService.createClaimRequest(claimRequest);
     }
 
     // cập nhật claimRequest thông qa service
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateClaimRequest(@RequestParam ClaimRequest claimRequest,
+    public ResponseEntity<?> updateClaimRequest(@Valid @RequestBody ClaimRequest claimRequest,
                                                 @PathVariable Long id) {
         return claimRequestService.updateClaimRequest(claimRequest, id);
     }

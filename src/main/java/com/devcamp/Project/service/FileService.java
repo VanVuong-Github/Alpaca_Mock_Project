@@ -1,7 +1,7 @@
 package com.devcamp.Project.service;
 
-import com.devcamp.Project.exception.FileStorageException;
-import com.devcamp.Project.exception.MyFileNotFoundException;
+import com.devcamp.Project.error.FileStorageException;
+import com.devcamp.Project.error.MyFileNotFoundException;
 import com.devcamp.Project.entity.FileProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

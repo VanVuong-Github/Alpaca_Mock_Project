@@ -1,16 +1,15 @@
 package com.devcamp.Project.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @RequiredArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class ContractDTO {
 
     private Date validFrom;

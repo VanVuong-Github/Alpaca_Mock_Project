@@ -21,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE customers SET deleted = true WHERE id=?")
-//@Where(clause = "deleted=false")
+@Where(clause = "deleted=false")
 public class Customer implements Serializable {
 
 	@Id

@@ -1,45 +1,46 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.elasticSearchService.CustomerElasticSearchService;
 import com.devcamp.Project.entity.Customer;
 import com.devcamp.Project.redisService.CustomerRedisService;
+import com.devcamp.Project.repository.CustomerElasticSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.xml.ws.Response;
+
 
 @RestController
-@RequestMapping("/redis/customer")
-public class RedisCustomerController {
+@RequestMapping("/es/customer")
+public class EsCustomerController {
 
     @Autowired
-    CustomerRedisService customerRedisService;
+    CustomerElasticSearchService customerElasticSearchService;
 
     @GetMapping("/")
     public ResponseEntity<?> getAllCustomer(){
-        return new ResponseEntity<>(customerRedisService.getAll(), HttpStatus.OK);
+        return new ResponseEntity<>(customerElasticSearchService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomer(@PathVariable Long id){
-        return new ResponseEntity<>(customerRedisService.get(id), HttpStatus.OK);
+    public ResponseEntity<?> getCustomerById(@PathVariable Long id){
+        return new ResponseEntity<>(customerElasticSearchService.getCustomerById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
     public ResponseEntity<?> createCustomer(@Valid @RequestBody Customer customer){
-        return new ResponseEntity<>(customerRedisService.create(customer), HttpStatus.CREATED);
+        return new ResponseEntity<>(customerElasticSearchService.create(customer),HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCustomer(@Valid @PathVariable Long id, @RequestBody Customer customer){
-        return new ResponseEntity<>(customerRedisService.update(id, customer), HttpStatus.OK);
+        return new ResponseEntity<>(customerElasticSearchService.update(id, customer), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable Long id){
-        return new ResponseEntity<>(customerRedisService.delete(id), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(customerElasticSearchService.delete(id), HttpStatus.NO_CONTENT);
     }
 }

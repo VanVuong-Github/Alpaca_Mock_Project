@@ -44,7 +44,7 @@ public class CustomerController {
 
     // cập nhật khách hàng
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody Customer inputCustomer){
+    public ResponseEntity<?> updateCustomer(@Valid @PathVariable Long id, @RequestBody Customer inputCustomer){
         return cCustomerService.updateCustomer(inputCustomer, id);
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Getter
 @Setter
-//@Where(clause = "deleted=false")
+@Where(clause = "deleted=false")
 public class CustomerDTO implements Serializable {
     private String name;
     private String gender;

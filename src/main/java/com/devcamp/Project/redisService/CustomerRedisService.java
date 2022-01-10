@@ -2,7 +2,7 @@ package com.devcamp.Project.redisService;
 
 import com.devcamp.Project.entity.Customer;
 
-import org.redisson.Redisson;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -11,52 +11,69 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class CustomerRedisService {
-    final Logger logger = LoggerFactory.getLogger(CustomerRedisService.class);
+    static final Logger logger = LoggerFactory.getLogger(CustomerRedisService.class);
 
-    RedissonClient redissonClient = Redisson.create();
-    RMap map = redissonClient.getMap ("Customer");
+    private final RedissonClient redissonClient;
 
-    public ResponseEntity<?> get(final Long id) {
-        Object customer = map.get(id);
+    public CustomerRedisService(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
+    }
+
+    private RMap<Object, Object> map(){
+        return redissonClient.getMap("customer");
+    }
+
+    public List<Object> getAll(){
+        logger.info("ListCustomer had found!!");
+        return map().values().stream().collect(Collectors.toList());
+    }
+
+    public Object get(final Long id) {
+        Object customer = map().get(id);
         if ( customer == null){
-            logger.info(String.format("Customer do not exist!"));
-            return new ResponseEntity<>("Customer do not exist!", HttpStatus.NOT_FOUND);
+            logger.error("Customer do not exist!");
+            return "Customer do not exist!";
         } else {
             logger.info(String.format("Customer had found!!"));
-            return new ResponseEntity<>(customer, HttpStatus.OK);
+            return customer;
         }
     }
 
     public Object create(Customer customer){
-        map.put(customer.getId(), customer);
-        logger.info(String.format("Customer with ID %s saved",customer.getId()));
-        return map.get(customer.getId());
+        map().put(customer.getId(), customer);
+        logger.info("Customer with ID {} saved",customer.getId());
+        return map().get(customer.getId());
     }
 
+    //data type
+
     public Object update(Long id, Customer customer){
-        Object oldCustomer = map.get(id);
+        Object oldCustomer = map().get(id);
         if ( oldCustomer == null){
-            logger.info(String.format("Customer do not exist!"));
-            return new ResponseEntity<>("Customer do not exist!", HttpStatus.NOT_FOUND);
+            logger.error("Customer do not exist!");
+            return "Customer do not exist!";
         } else {
-            map.put(id, customer);
-            logger.info(String.format("Customer with ID %s updated", id));
-            return new ResponseEntity<>(map.get(id), HttpStatus.OK);
+            map().put(id, customer);
+            logger.info("Customer with ID {} updated",customer.getId());
+            return map().get(id);
         }
     }
 
-    public ResponseEntity<?> delete(long id){
-        Object customer = map.get(id);
+    public Object delete(long id){
+        Object customer = map().get(id);
         if ( customer == null){
-            logger.info(String.format("Customer do not exist!"));
-            return new ResponseEntity<>("Customer do not exist!", HttpStatus.NOT_FOUND);
+            logger.error("Customer do not exist!");
+            return "Customer do not exist!";
         } else {
-            map.remove(id);
-            logger.info(String.format("Customer with ID %s deleted", id));
-            return new ResponseEntity<>("Deleted Customer Success!!", HttpStatus.NO_CONTENT);
+            map().remove(id);
+            logger.info("Customer with ID {} deleted", id);
+            return "Deleted Customer Success!!";
         }
 
     }
