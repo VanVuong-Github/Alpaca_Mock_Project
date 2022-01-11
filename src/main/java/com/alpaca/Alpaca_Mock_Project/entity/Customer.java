@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -33,14 +34,15 @@ public class Customer implements Serializable {
     private Long id;
 
     @NotBlank(message = "Name is required")
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String name;
 
     @NotBlank(message = "Gender is required")
     private String gender;
 
+    //fieldtype = keyword
     @NotBlank(message = "No. card id is required")
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String cardId;
 
     @NotBlank(message = "Phone is required")
@@ -49,8 +51,8 @@ public class Customer implements Serializable {
     @Email(message = "Email is required")
     private String email;
 
+    @Field(type=FieldType.Date, format=DateFormat.date, pattern="dd.MM.uuuu")
     @NotNull(message = "Date of birth is required")
-    @JsonFormat(pattern="yyyy-MM-dd")
     private Date dateOfBirth;
 
     @NotBlank(message = "Address is required")

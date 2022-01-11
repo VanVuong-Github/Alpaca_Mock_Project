@@ -2,9 +2,10 @@ package com.alpaca.Alpaca_Mock_Project.controller;
 
 import com.alpaca.Alpaca_Mock_Project.cacheService.impl.CustomerCacheServiceImpl;
 import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
+import com.alpaca.Alpaca_Mock_Project.elasticsearchService.CustomerElasticsearchService;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import com.alpaca.Alpaca_Mock_Project.mapper.CustomerMapper;
-import com.alpaca.Alpaca_Mock_Project.service.impl.CustomerServiceImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,25 +18,25 @@ import java.util.stream.Collectors;
 @RequestMapping("/customer")
 public class CustomerController {
 
-    private final CustomerServiceImpl customerService;
+    private final CustomerElasticsearchService customerElasticsearchService;
 
     private final CustomerCacheServiceImpl customerCacheService;
 
     private final CustomerMapper customerMapper;
 
-    public CustomerController(CustomerServiceImpl customerService, CustomerCacheServiceImpl customerCacheService, CustomerMapper customerMapper) {
-        this.customerService = customerService;
+    public CustomerController(CustomerElasticsearchService customerElasticsearchService, CustomerCacheServiceImpl customerCacheService, CustomerMapper customerMapper) {
+        this.customerElasticsearchService = customerElasticsearchService;
         this.customerCacheService = customerCacheService;
         this.customerMapper = customerMapper;
     }
 
     @GetMapping
-    public ResponseEntity<?> findAll(){
+    public ResponseEntity<?> findAll(Pageable pageable){
         List<Object> customerCacheList = customerCacheService.getAllCache();
         // check cache
         if (!customerCacheList.isEmpty())
             return ResponseEntity.ok().body(customerCacheList);
-        return ResponseEntity.ok().body(mapCustomerToCustomerDto(customerService.findAll()));
+        return ResponseEntity.ok().body(customerElasticsearchService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
@@ -44,21 +45,22 @@ public class CustomerController {
         // check cache
         if (customerCache != null)
             return ResponseEntity.ok().body(customerCache);
-        return ResponseEntity.ok().body(mapCustomerToCustomerDto(customerService.getCustomerById(id)));
+        Customer customer = customerElasticsearchService.getCustomerById(id).orElseThrow(NullPointerException::new);
+        return ResponseEntity.ok().body(mapCustomerToCustomerDto(customer));
     }
 
     @PostMapping
     public ResponseEntity<?> createCustomer(@RequestBody @Valid final CustomerDto customerDto){
-        Customer customer = customerService.saveCustomer(customerDto);
+        Customer customer = customerElasticsearchService.create(mapCustomerDtoToCustomer(customerDto));
         // put cache
         customerCacheService.putCache(customer);
-        return ResponseEntity.ok().body(mapCustomerToCustomerDto(customer));
+        return ResponseEntity.ok().body(customer);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCustomer(@RequestBody @Valid final CustomerDto customerDto,
                                    @PathVariable("id") @Min(1) final Long id){
-        Customer customer = customerService.updateCustomer(customerDto, id);
+        Customer customer = customerElasticsearchService.update(mapCustomerDtoToCustomer(customerDto), id);
         // put cache
         customerCacheService.putCache(customer);
         return ResponseEntity.ok().body(customer);
@@ -66,17 +68,17 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable("id") @Min(1) final Long id){
-        customerService.deleteCustomerById(id);
+        customerElasticsearchService.delete(id);
         // remove cache
         customerCacheService.deleteCache(id);
         return ResponseEntity.ok().body("Customer Deleted!");
     }
 
-    private List<CustomerDto> mapCustomerToCustomerDto(List<Customer> customerList){
-        return customerList.stream().map(customerMapper::customerToCustomerDto).collect(Collectors.toList());
-    }
-
     private CustomerDto mapCustomerToCustomerDto(Customer customer){
         return CustomerMapper.INSTANCE.customerToCustomerDto(customer);
+    }
+
+    private Customer mapCustomerDtoToCustomer(CustomerDto customerDto){
+        return CustomerMapper.INSTANCE.customerDtoToCustomer(customerDto);
     }
 }
