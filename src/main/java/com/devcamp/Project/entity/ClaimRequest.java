@@ -7,6 +7,9 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @Getter
 @Setter
@@ -27,8 +30,12 @@ public class ClaimRequest implements Serializable {
     private String customerName;
 
     @NotNull(message = "please input cardId of customer")
-    private String customerCardId;
+    private Long customerCardId;
 
     private boolean deleted = Boolean.FALSE;
+
+    @Column( name = "num_claim_request")
+    private String numClaimRequest;
+
 
 }

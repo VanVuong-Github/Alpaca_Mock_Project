@@ -37,7 +37,7 @@ public class Customer implements Serializable {
 
     @Column( name = "card_id", unique = true)
     @NotNull( message = "Please enter your cardId!")
-    private String cardId;
+    private Long cardId;
 
     @Column(unique = true)
     @NotNull( message = "Please enter your phone!")
@@ -63,7 +63,7 @@ public class Customer implements Serializable {
                 mappedBy = "customer")
     private List<Contract> contract;
 
-    public Customer(String name, String gender, String cardId, String phone, String email, Date dateOfBirth, String address, String occupation) {
+    public Customer(String name, String gender, Long cardId, String phone, String email, Date dateOfBirth, String address, String occupation) {
         this.name = name;
         this.gender = gender;
         this.cardId = cardId;
@@ -72,6 +72,5 @@ public class Customer implements Serializable {
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.occupation = occupation;
-
     }
 }

@@ -12,5 +12,6 @@ spring:
         max-active: 30
         max-idle: 8
         min-idle: 0
-
+  main:
+    allow-bean-definition-overriding: true
 

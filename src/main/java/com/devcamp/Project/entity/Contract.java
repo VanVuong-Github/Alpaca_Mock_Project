@@ -1,5 +1,6 @@
 package com.devcamp.Project.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.sql.Date;
+import java.util.GregorianCalendar;
 
 @Entity
 @Table( name = "contract")
@@ -46,10 +52,16 @@ public class Contract implements Serializable {
     @NotNull(message = "please input acceptable accidents!")
     private String acceptableAccidents;
 
+    @Column(name = "num_contract")
+    private String numContract;
     private boolean deleted = Boolean.FALSE;
+
+
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn( name = "customer_id")
     private Customer customer;
+
+
 }

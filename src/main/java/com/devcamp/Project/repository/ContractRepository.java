@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface ContractRepository extends JpaRepository<Contract, Long> {
     List<Contract> findByCustomerId(Long id);
 
+    Contract findByNumContract(String numContract);
+
 }

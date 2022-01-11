@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Service
 public class CustomerElasticSearchService {
+
     private final Logger logger = LoggerFactory.getLogger(CustomerElasticSearchService.class);
 
     private final CustomerElasticSearchRepository customerElasticSearchRepository;
@@ -17,7 +18,6 @@ public class CustomerElasticSearchService {
     public CustomerElasticSearchService(CustomerElasticSearchRepository customerElasticSearchRepository) {
         this.customerElasticSearchRepository = customerElasticSearchRepository;
     }
-
 
     public Object getCustomerById(final Long id){
         Optional<Customer> oldCustomer = customerElasticSearchRepository.findById(id);

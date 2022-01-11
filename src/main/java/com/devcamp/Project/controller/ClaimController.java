@@ -25,34 +25,39 @@ public class ClaimController {
 
     // lấy tất cả thông tin của claimRequest thông qa service
     @GetMapping("")
-    public List<ClaimRequestDTO> getAll(){
-        return claimRequestService.getAll();
+    public ResponseEntity<List<ClaimRequestDTO>> getAll(){
+
+        return new ResponseEntity<>(claimRequestService.getAll(), HttpStatus.OK);
     }
 
     // lấy tất cả thông tin của claimRequest theo id thông qa service
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id){
-        return claimRequestService.getById(id);
+        return new ResponseEntity<>(claimRequestService.getById(id),HttpStatus.OK) ;
+    }
 
+    @GetMapping("/numClaim/{claim}")
+    public ResponseEntity<?> getClaimRequestByNumContract(@PathVariable("claim") String numClaim){
+        return new ResponseEntity<>(claimRequestService.getClaimRequestByNumClaimRequest(numClaim), HttpStatus.OK);
     }
 
     // tạo mơi claimRequest thông qa service
     @PostMapping("/")
     // requestBody
-    public ClaimRequestDTO createClaimRequest(@Valid @RequestBody ClaimRequest claimRequest){
-        return claimRequestService.createClaimRequest(claimRequest);
+    public ResponseEntity<?> createClaimRequest(@Valid @RequestBody ClaimRequest claimRequest){
+        return new ResponseEntity<>(claimRequestService.createClaimRequest(claimRequest), HttpStatus.CREATED) ;
     }
 
     // cập nhật claimRequest thông qa service
     @PutMapping("/{id}")
     public ResponseEntity<?> updateClaimRequest(@Valid @RequestBody ClaimRequest claimRequest,
                                                 @PathVariable Long id) {
-        return claimRequestService.updateClaimRequest(claimRequest, id);
+        return new ResponseEntity<>(claimRequestService.updateClaimRequest(claimRequest, id), HttpStatus.OK) ;
     }
 
     // xóa claimRequest thông qa service
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClaimRequest(@PathVariable Long id){
-        return claimRequestService.deleteClaimRequest(id);
+        return new ResponseEntity<>(claimRequestService.deleteClaimRequest(id), HttpStatus.NO_CONTENT);
     }
 }

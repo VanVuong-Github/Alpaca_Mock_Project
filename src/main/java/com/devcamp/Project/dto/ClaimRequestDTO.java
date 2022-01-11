@@ -12,4 +12,5 @@ public class ClaimRequestDTO {
 
     private String customerName;
     private String customerCardId;
+    private String numClaimRequest;
 }

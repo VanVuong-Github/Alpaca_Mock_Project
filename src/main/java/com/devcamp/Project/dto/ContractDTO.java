@@ -18,4 +18,5 @@ public class ContractDTO {
     private double remainingAmount;
     private String acceptableHospitals;
     private String acceptableAccidents;
+    private String numContract;
 }

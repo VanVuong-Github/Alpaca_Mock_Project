@@ -20,38 +20,45 @@ public class ContractController {
 
     // lấy thông tin hợp đồng thông qa service
     @GetMapping("")
-    public List<ContractDTO> getAllContract() {
-        return contractService.getAllContract();
+    public ResponseEntity<List<ContractDTO>> getAllContract() {
+
+        return new ResponseEntity<>(contractService.getAllContract(), HttpStatus.OK) ;
     }
 
     // lấy thông tin hợp đồng bằng id thông qa service
     @GetMapping("/{id}")
     public ResponseEntity<?> getContractById(@PathVariable Long id) {
-        return contractService.getContractById(id);
+
+        return new ResponseEntity<>(contractService.getContractById(id), HttpStatus.OK);
     }
 
     // lấy thông tin hợp đồng bằng id của khách hàng thông qa service
     @GetMapping("/customer/{id}")
     public ResponseEntity<?> getContractByCustomerId(@PathVariable Long id) {
-        return contractService.getContractByCustomerId(id);
+        return new ResponseEntity<>(contractService.getContractByCustomerId(id), HttpStatus.OK);
     }
 
+    @GetMapping("/numcontract/{contract}")
+    public ResponseEntity<?> getContractByNumContract(@PathVariable("contract") String numContract){
+        return new ResponseEntity<>(contractService.getContractByNumContract(numContract), HttpStatus.OK);
+    }
     // tạo mới hợp đồng
     @PostMapping("/customer/{id}")
     public ResponseEntity<?> createContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) {
-        return contractService.createContract(id, inputContract);
+        return new ResponseEntity<>(contractService.createContract(id, inputContract), HttpStatus.CREATED);
     }
 
     // cập nhật hợp đồng
     @PutMapping("/{id}")
     public ResponseEntity<?> updateContract(@Valid @PathVariable Long id, @RequestBody Contract inputContract) {
-        return contractService.updateContract(id, inputContract);
+        return new ResponseEntity<>(contractService.updateContract(id, inputContract), HttpStatus.OK) ;
 
     }
 
     // xóa hợp đồng
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteContract(@PathVariable Long id) {
-        return contractService.deleteContractById(id);
+
+        return new ResponseEntity<>(contractService.deleteContractById(id), HttpStatus.NO_CONTENT) ;
     }
 }
