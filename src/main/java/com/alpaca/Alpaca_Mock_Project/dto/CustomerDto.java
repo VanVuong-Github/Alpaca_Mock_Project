@@ -1,5 +1,6 @@
 package com.alpaca.Alpaca_Mock_Project.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -36,6 +37,7 @@ public class CustomerDto implements Serializable {
     private String email;
 
     @NotNull(message = "Date of birth is required")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd")
     private Date dateOfBirth;
 
     @NotBlank(message = "Address is required")

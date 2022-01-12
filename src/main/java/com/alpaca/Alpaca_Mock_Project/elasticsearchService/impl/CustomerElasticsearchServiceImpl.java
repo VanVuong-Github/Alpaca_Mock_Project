@@ -65,6 +65,7 @@ public class CustomerElasticsearchServiceImpl implements CustomerElasticsearchSe
         // check if it is empty, insert from db
         if (customers.isEmpty()) {
             customers = insertBulk(customerService.findAll());
+            System.out.println(customers);
         }
         // create customerMap for caching
         Map<Object, Object> customerMap = new HashMap<>();

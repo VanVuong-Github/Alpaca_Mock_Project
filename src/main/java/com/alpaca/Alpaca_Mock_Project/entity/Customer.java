@@ -2,6 +2,7 @@ package com.alpaca.Alpaca_Mock_Project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -18,7 +19,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @Builder
@@ -40,19 +41,20 @@ public class Customer implements Serializable {
     @NotBlank(message = "Gender is required")
     private String gender;
 
-    //fieldtype = keyword
     @NotBlank(message = "No. card id is required")
     @Field(type = FieldType.Keyword)
     private String cardId;
 
+    @Field(type = FieldType.Keyword)
     @NotBlank(message = "Phone is required")
     private String phone;
 
+    @Field(type = FieldType.Keyword)
     @Email(message = "Email is required")
     private String email;
 
-    @Field(type=FieldType.Date, format=DateFormat.date, pattern="dd.MM.uuuu")
     @NotNull(message = "Date of birth is required")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd")
     private Date dateOfBirth;
 
     @NotBlank(message = "Address is required")

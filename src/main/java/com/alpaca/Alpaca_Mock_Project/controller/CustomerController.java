@@ -39,6 +39,11 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerElasticsearchService.findAll(pageable));
     }
 
+    @GetMapping("/searchBy")
+    public ResponseEntity<?> search(Pageable pageable){
+        return ResponseEntity.ok().body(customerElasticsearchService.findAll(pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") @Min(1) final Long id){
         Object customerCache = customerCacheService.getCacheById(id);
