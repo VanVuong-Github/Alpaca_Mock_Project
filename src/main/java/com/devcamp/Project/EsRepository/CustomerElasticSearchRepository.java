@@ -1,4 +1,4 @@
-package com.devcamp.Project.repository;
+package com.devcamp.Project.EsRepository;
 
 import com.devcamp.Project.entity.Customer;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

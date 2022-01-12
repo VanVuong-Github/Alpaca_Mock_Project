@@ -2,21 +2,17 @@ package com.devcamp.Project.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Calendar;
 import java.sql.Date;
-import java.util.GregorianCalendar;
+
 
 @Entity
 @Table( name = "contract")
@@ -24,6 +20,7 @@ import java.util.GregorianCalendar;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(indexName = "contract", createIndex = true)
 @SQLDelete(sql = "UPDATE contract SET deleted = true WHERE id=?")
 //@Where(clause = "deleted=false")
 public class Contract implements Serializable {

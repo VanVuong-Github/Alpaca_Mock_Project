@@ -3,7 +3,6 @@ package com.devcamp.Project.controller;
 import com.devcamp.Project.dto.ContractDTO;
 import com.devcamp.Project.entity.Contract;
 import com.devcamp.Project.service.ContractService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,12 @@ import java.util.List;
 @RequestMapping("/contract")
 public class ContractController {
 
-    @Autowired
-    ContractService contractService;
+
+    private final ContractService contractService;
+
+    public ContractController(ContractService contractService) {
+        this.contractService = contractService;
+    }
 
     // lấy thông tin hợp đồng thông qa service
     @GetMapping("")

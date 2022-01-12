@@ -1,12 +1,14 @@
 package com.devcamp.Project.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -20,6 +22,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(indexName = "customer", createIndex = true)
 @SQLDelete(sql = "UPDATE customers SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 public class Customer implements Serializable {
@@ -49,6 +52,7 @@ public class Customer implements Serializable {
 
     @Column( name = "date_of_bird")
     @NotNull( message = "Please enter your date of birth!")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
     @NotNull( message = "Please enter your address!")
     private String address;
@@ -63,14 +67,4 @@ public class Customer implements Serializable {
                 mappedBy = "customer")
     private List<Contract> contract;
 
-    public Customer(String name, String gender, Long cardId, String phone, String email, Date dateOfBirth, String address, String occupation) {
-        this.name = name;
-        this.gender = gender;
-        this.cardId = cardId;
-        this.phone = phone;
-        this.email = email;
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
-        this.occupation = occupation;
-    }
 }

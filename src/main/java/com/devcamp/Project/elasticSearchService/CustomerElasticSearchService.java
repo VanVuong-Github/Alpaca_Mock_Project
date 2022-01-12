@@ -1,7 +1,7 @@
 package com.devcamp.Project.elasticSearchService;
 
 import com.devcamp.Project.entity.Customer;
-import com.devcamp.Project.repository.CustomerElasticSearchRepository;
+import com.devcamp.Project.EsRepository.CustomerElasticSearchRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
