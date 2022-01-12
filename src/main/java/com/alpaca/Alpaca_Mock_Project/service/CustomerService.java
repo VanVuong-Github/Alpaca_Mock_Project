@@ -15,4 +15,6 @@ public interface CustomerService {
     Customer updateCustomer(final Customer customer, final Long id);
 
     void deleteCustomerById(final Long id);
+
+    List<Customer> search(String textToSearch);
 }

@@ -37,6 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
+    public List<Customer> search(String textToSearch){
+        logger.log(Level.INFO, "Get all customer");
+        return customerRepository.findAllByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCase(textToSearch, textToSearch, textToSearch);
+    }
+
+    @Override
+    @Transactional
     public Customer saveCustomer(final Customer customer){
         logger.log(Level.INFO, "Save new customer");
         return customerRepository.save(customer);

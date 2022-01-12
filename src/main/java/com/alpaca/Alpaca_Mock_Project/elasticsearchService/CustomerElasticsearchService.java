@@ -15,4 +15,5 @@ public interface CustomerElasticsearchService {
     void delete(final Long id);
     Customer create(final Customer customer);
     Customer update(final Customer customer, final Long id);
+    Page<CustomerDto> search(String textToSearch, Pageable pageable);
 }

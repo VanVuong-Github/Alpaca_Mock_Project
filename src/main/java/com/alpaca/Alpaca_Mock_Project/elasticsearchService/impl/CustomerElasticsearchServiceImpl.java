@@ -61,20 +61,26 @@ public class CustomerElasticsearchServiceImpl implements CustomerElasticsearchSe
     @Transactional
     public Page<CustomerDto> findAll(Pageable pageable){
         logger.log(Level.INFO, "Get all elasticsearch customer");
-        List<Customer> customers = customerElasticsearchRepository.findAll(pageable).getContent();
+        List<Customer> customers = customerElasticsearchRepository.findAll();
         // check if it is empty, insert from db
         if (customers.isEmpty()) {
             customers = insertBulk(customerService.findAll());
-            System.out.println(customers);
         }
-        // create customerMap for caching
-        Map<Object, Object> customerMap = new HashMap<>();
-        for (Customer customer:customers) {
-            customerMap.put(customer.getId(), customer);
+        putListToRedisMap(customers);
+        return new PageImpl<>(mapCustomerToCustomerDto(customers), pageable, customers.size());
+    }
+
+    @Override
+    @Transactional
+    public Page<CustomerDto> search(String textToSearch, Pageable pageable){
+        logger.log(Level.INFO, "Search all elasticsearch customer by name, email, phone");
+        List<Customer> customers = customerElasticsearchRepository.findAllByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCase(textToSearch, textToSearch, textToSearch);
+        // check if it is empty, insert from db
+        if (customers.isEmpty()) {
+            customers = insertBulk(customerService.search(textToSearch));
         }
-        // put all map to cache
-        customerCacheService.putAllCache(customerMap);
-        return new PageImpl<CustomerDto>(mapCustomerToCustomerDto(customers), pageable, customers.size());
+        putListToRedisMap(customers);
+        return new PageImpl<>(mapCustomerToCustomerDto(customers), pageable, customers.size());
     }
 
     @Override
@@ -106,6 +112,16 @@ public class CustomerElasticsearchServiceImpl implements CustomerElasticsearchSe
         logger.log(Level.INFO, "Update elasticsearch customer");
         Customer customerUpdated = customerService.updateCustomer(customer, id);
         return customerElasticsearchRepository.save(customerUpdated);
+    }
+
+    private void putListToRedisMap(List<Customer> customers){
+        // create customerMap for caching
+        Map<Object, Object> customerMap = new HashMap<>();
+        for (Customer customer:customers) {
+            customerMap.put(customer.getId(), customer);
+        }
+        // put all map to cache
+        customerCacheService.putAllCache(customerMap);
     }
 
     private List<CustomerDto> mapCustomerToCustomerDto(List<Customer> customerList){

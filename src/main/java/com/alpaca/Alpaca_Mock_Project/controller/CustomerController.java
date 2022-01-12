@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,9 @@ public class CustomerController {
     }
 
     @GetMapping("/searchBy")
-    public ResponseEntity<?> search(Pageable pageable){
-        return ResponseEntity.ok().body(customerElasticsearchService.findAll(pageable));
+    public ResponseEntity<?> search(@RequestParam("textToSearch") @NotBlank String textToSearch,
+                                    Pageable pageable){
+        return ResponseEntity.ok().body(customerElasticsearchService.search(textToSearch, pageable));
     }
 
     @GetMapping("/{id}")
