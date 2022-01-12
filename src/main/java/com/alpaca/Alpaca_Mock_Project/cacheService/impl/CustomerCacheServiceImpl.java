@@ -4,8 +4,12 @@ import com.alpaca.Alpaca_Mock_Project.cacheService.CustomerCacheService;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -30,15 +34,20 @@ public class CustomerCacheServiceImpl implements CustomerCacheService {
     }
 
     @Override
-    public Object getCacheById(final Long id) {
+    public Customer getCacheById(final Long id) {
         logger.log(Level.INFO, "Get customer cache with id: {0}", id);
-        return getMap().get(id);
+        return Customer.class.cast(getMap().get(id));
     }
 
     @Override
-    public List<Object> getAllCache(){
+    public Page<Customer> getAllCache(Pageable pageable){
         logger.log(Level.INFO, "Get all customer cache");
-        return getMap().values().stream().collect(Collectors.toList());
+        List<Customer> customerList = new ArrayList<>();
+        List<Object> objectList = getMap().values().stream().collect(Collectors.toList());
+        for (Object obj:objectList) {
+            customerList.add(Customer.class.cast(obj));
+        }
+        return new PageImpl<>(customerList, pageable, customerList.size());
     }
 
     @Override

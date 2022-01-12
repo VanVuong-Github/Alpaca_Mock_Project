@@ -5,6 +5,7 @@ import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
 import com.alpaca.Alpaca_Mock_Project.elasticsearchService.CustomerElasticsearchService;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import com.alpaca.Alpaca_Mock_Project.mapper.CustomerMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/customer")
@@ -23,19 +22,16 @@ public class CustomerController {
 
     private final CustomerCacheServiceImpl customerCacheService;
 
-    private final CustomerMapper customerMapper;
-
-    public CustomerController(CustomerElasticsearchService customerElasticsearchService, CustomerCacheServiceImpl customerCacheService, CustomerMapper customerMapper) {
+    public CustomerController(CustomerElasticsearchService customerElasticsearchService, CustomerCacheServiceImpl customerCacheService) {
         this.customerElasticsearchService = customerElasticsearchService;
         this.customerCacheService = customerCacheService;
-        this.customerMapper = customerMapper;
     }
 
     @GetMapping
     public ResponseEntity<?> findAll(Pageable pageable){
-        List<Object> customerCacheList = customerCacheService.getAllCache();
+        Page<Customer> customerCacheList = customerCacheService.getAllCache(pageable);
         // check cache
-        if (!customerCacheList.isEmpty())
+        if (!customerCacheList.getContent().isEmpty())
             return ResponseEntity.ok().body(customerCacheList);
         return ResponseEntity.ok().body(customerElasticsearchService.findAll(pageable));
     }
@@ -48,7 +44,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomerById(@PathVariable("id") @Min(1) final Long id){
-        Object customerCache = customerCacheService.getCacheById(id);
+        Customer customerCache = customerCacheService.getCacheById(id);
         // check cache
         if (customerCache != null)
             return ResponseEntity.ok().body(customerCache);
