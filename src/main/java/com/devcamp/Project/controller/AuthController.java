@@ -1,5 +1,6 @@
 package com.devcamp.Project.controller;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -58,4 +59,5 @@ public class AuthController {
     public ResponseEntity hello(){
         return ResponseEntity.ok("hello");
     }
+
 }
