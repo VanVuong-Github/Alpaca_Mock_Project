@@ -22,7 +22,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "customer", createIndex = true)
+//@Document(indexName = "customer", createIndex = true)
 @SQLDelete(sql = "UPDATE customers SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 public class Customer implements Serializable {

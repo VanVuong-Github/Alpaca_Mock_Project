@@ -1,5 +1,6 @@
 package com.devcamp.Project.controller;
 
+import com.devcamp.Project.RabbitMQConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.devcamp.Project.dto.UserPrincipal;
 import com.devcamp.Project.entity.Token;
 import com.devcamp.Project.entity.User;
@@ -30,6 +28,14 @@ public class AuthController {
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @GetMapping("/MQ/{routingKey}")
+    public void rabbitMQ(@PathVariable String routingKey){
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_NAME, routingKey, "String");
+    }
 
     // đăng kí user
     @PostMapping("/register")

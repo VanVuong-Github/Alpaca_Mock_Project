@@ -20,7 +20,7 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "contract", createIndex = true)
+//@Document(indexName = "contract", createIndex = true)
 @SQLDelete(sql = "UPDATE contract SET deleted = true WHERE id=?")
 //@Where(clause = "deleted=false")
 public class Contract implements Serializable {
