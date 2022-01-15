@@ -1,8 +1,10 @@
 package com.alpaca.Alpaca_Mock_Project.service.impl;
 
+import com.alpaca.Alpaca_Mock_Project.RabbitMQConfig;
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import com.alpaca.Alpaca_Mock_Project.repository.CustomerRepository;
 import com.alpaca.Alpaca_Mock_Project.service.CustomerService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,8 +19,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, RabbitTemplate rabbitTemplate) {
         this.customerRepository = customerRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -46,7 +51,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public Customer saveCustomer(final Customer customer){
         logger.log(Level.INFO, "Save new customer");
-        return customerRepository.save(customer);
+        Customer customerToSave = customerRepository.save(customer);
+        String routingKey = "customer.created";
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_NAME, routingKey, customerToSave);
+        return customerToSave;
     }
 
     @Override
@@ -62,7 +70,10 @@ public class CustomerServiceImpl implements CustomerService {
         oldCustomer.setDateOfBirth(customer.getDateOfBirth());
         oldCustomer.setAddress(customer.getAddress());
         oldCustomer.setOccupation(customer.getOccupation());
-        return customerRepository.save(oldCustomer);
+        customerRepository.save(oldCustomer);
+        String routingKey = "customer.updated";
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_NAME, routingKey, oldCustomer);
+        return oldCustomer;
     }
 
     @Override
@@ -71,5 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
         logger.log(Level.INFO, "Delete customer with id: {0}", id);
         Customer oldCustomer = customerRepository.findById(id).orElseThrow(NullPointerException::new);
         customerRepository.delete(oldCustomer);
+        String routingKey = "customer.deleted";
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_NAME, routingKey, id);
     }
 }

@@ -13,7 +13,7 @@ public interface CustomerElasticsearchService {
     Page<CustomerDto> findAll(Pageable pageable);
     List<Customer> insertBulk(final List<Customer> customerList);
     void delete(final Long id);
-    Customer create(final Customer customer);
-    Customer update(final Customer customer, final Long id);
+    void create(final Customer customer);
+    void update(final Customer customer);
     Page<CustomerDto> search(String textToSearch, Pageable pageable);
 }

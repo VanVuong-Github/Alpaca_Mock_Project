@@ -1,5 +1,6 @@
 package com.alpaca.Alpaca_Mock_Project.elasticsearchService.impl;
 
+import com.alpaca.Alpaca_Mock_Project.RabbitMQConfig;
 import com.alpaca.Alpaca_Mock_Project.cacheService.CustomerCacheService;
 import com.alpaca.Alpaca_Mock_Project.dto.CustomerDto;
 import com.alpaca.Alpaca_Mock_Project.elasticsearchRepository.CustomerElasticsearchRepository;
@@ -7,6 +8,7 @@ import com.alpaca.Alpaca_Mock_Project.elasticsearchService.CustomerElasticsearch
 import com.alpaca.Alpaca_Mock_Project.entity.Customer;
 import com.alpaca.Alpaca_Mock_Project.mapper.CustomerMapper;
 import com.alpaca.Alpaca_Mock_Project.service.CustomerService;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +52,8 @@ public class CustomerElasticsearchServiceImpl implements CustomerElasticsearchSe
         try {
             customer = customerElasticsearchRepository.findById(id).orElseThrow(NullPointerException::new);
         } catch (NullPointerException e){
-            customer = create(customerService.getCustomerById(id));
+            customer = customerService.getCustomerById(id);
+            create(customer);
         }
         // put to cache
         customerCacheService.putCache(customer);
@@ -92,26 +95,26 @@ public class CustomerElasticsearchServiceImpl implements CustomerElasticsearchSe
 
     @Override
     @Transactional
+    @RabbitListener(queues = {RabbitMQConfig.CUSTOMER_DELETED_QUEUE})
     public void delete(final Long id){
         logger.log(Level.INFO, "Delete elasticsearch customer with id: {0}", id);
-        customerService.deleteCustomerById(id);
         customerElasticsearchRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public Customer create(final Customer customer){
+    @RabbitListener(queues = {RabbitMQConfig.CUSTOMER_CREATED_QUEUE})
+    public void create(final Customer customer){
         logger.log(Level.INFO, "Create new elasticsearch customer");
-        customerService.saveCustomer(customer);
-        return customerElasticsearchRepository.save(customer);
+        customerElasticsearchRepository.save(customer);
     }
 
     @Override
     @Transactional
-    public Customer update(final Customer customer, final Long id) {
+    @RabbitListener(queues = {RabbitMQConfig.CUSTOMER_UPDATED_QUEUE})
+    public void update(final Customer customer) {
         logger.log(Level.INFO, "Update elasticsearch customer");
-        Customer customerUpdated = customerService.updateCustomer(customer, id);
-        return customerElasticsearchRepository.save(customerUpdated);
+        customerElasticsearchRepository.save(customer);
     }
 
     private void putListToRedisMap(List<Customer> customers){
